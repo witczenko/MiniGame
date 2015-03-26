@@ -1,0 +1,3 @@
+** MiniGame, by Witek **
+GAME LOG:
+VBO is supported!
