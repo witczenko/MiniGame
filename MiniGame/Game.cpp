@@ -1,6 +1,8 @@
 #include "Game.h"
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Animation.h"
+
 #define AXES_LENGTH (10e5)
 
 float red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -9,8 +11,10 @@ float green[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 float greena50[4] = { 0.0f, 1.0f, 0.0f, 0.5f };
 float blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
 
-uint32 TEXTURE_1, TEXTURE_2;
 CSpriteRenderer spriteRenderer;
+CTextureManager textureMan;
+CSprtieAnimation spriteAnim;
+CSprite *fireSprite;
 
 CGame::CGame(int argc, char* args[]) :
 Win(0),
@@ -255,7 +259,8 @@ void CGame::SetupShaders(){
 
 void CGame::Update(uint32 dt){
 	CInputManager::GetInputManager().Update(dt);
-
+	spriteAnim.Update(dt);
+	fireSprite->AssingTexture(spriteAnim.GetFrame());
 	
 }
 
@@ -281,13 +286,13 @@ void CGame::Draw(uint32 dt){
 
 	vsml.rotate(modelRot.r, 0.0f, 0.0f, 1.0f);
 	vsml.rotate(modelRot.y, 0.0f, 1.0f, 0.0f);
-	vsml.rotate(modelRot.p, 1.0f, 0.0f, 1.0f);
-	DrawAxes();
+	vsml.rotate(modelRot.p, 1.0f, 0.0f, 1.0f);	
 	basicShader.setUniform("texCount", 1);
 	spriteRenderer.Render();
 
 	vsml.popMatrix(VSMathLib::MODEL);
 
+	DrawAxes();
 	basicFont.renderSentence(10, 10, debugInfo);	
 
 	SDL_GL_SwapWindow(Win);
@@ -311,18 +316,30 @@ bool CGame::Run(){
 
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
 
-	TEXTURE_1 = VSResourceLib::loadRGBATexture("gfx/grid_color.png");
-	TEXTURE_2 = VSResourceLib::loadRGBATexture("gfx/bg.jpg");
-
-
 	//Sprite Renderer TEST
 	spriteRenderer.Init();
+	textureMan.Init(); // <-- Here all textures are loaded
+
+	if (spriteAnim.LoadAnimation("gfx/particles_fireball_wind/00", 50)){
+		std::cout << "\n Loaded animation!\n";
+	}else
+		std::cout << "\n Loading animation FAILED!\n";
+
+	spriteAnim.SetFPS(24);
+
+	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
+	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
+
 
 	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, 1.0f);
+
+	fireSprite = new CSprite(init_pos3, 0.5f, 0.5f, spriteAnim.GetFrame());
 
 	spriteRenderer.AddSprite(new CSprite(init_pos2, 1.5f*5, 1.0f*5, TEXTURE_2));
 	spriteRenderer.AddSprite(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1));
+	spriteRenderer.AddSprite(fireSprite);
 
 	char fps[64] = "";
 	uint32 acc = 0;
@@ -483,12 +500,12 @@ void CGame::DrawAxes(void){
 	float xa[6] = { -length, 0.0f, 0.0f, length, 0.0f, 0.0f };
 	float ya[6] = { 0.0f, -length, 0.0f, 0.0f, length, 0.0f };
 	float za[6] = { 0.0f, 0.0f, length, 0.0f, 0.0f, -length };
-
-	//shapeRender.SetColor(red);
+	basicShader.setUniform("texCount", 0);
+	shapeRender.SetColor(red);
 	shapeRender.DrawLine(xa, 2);
-	//shapeRender.SetColor(green);
+	shapeRender.SetColor(green);
 	shapeRender.DrawLine(ya, 2);
-	//shapeRender.SetColor(blue);
+	shapeRender.SetColor(blue);
 	shapeRender.DrawLine(za, 2);
 
 	vsml.popMatrix(VSMathLib::MODEL);

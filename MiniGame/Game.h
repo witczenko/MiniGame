@@ -15,6 +15,7 @@
 
 #include "GameObject.h"
 #include "Sprite.h"
+#include "TextureManager.h"
 
 #include <iostream>
 #include <fstream>
