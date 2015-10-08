@@ -3,13 +3,18 @@
 
 #include "Types.h"
 #include <GL/glew.h>
-#include "SDL.h"
-#include "Scene.h"
-#include "Physics.h"
+#include "SDL/SDL.h"
 #include "Input.h"
+#include "Camera.h"
+#include <glm\glm.hpp>
 
 #define FORCE_GL_3
 #include "VSL/vslibs.h"
+
+#include "GameUtils.h"
+
+#include "GameObject.h"
+#include "Sprite.h"
 
 #include <iostream>
 #include <fstream>
@@ -25,6 +30,8 @@
 
 #define ASPECT	(WIDTH/(float32)HEIGHT)
 #define FOV		(60.0f)
+
+#define CAM_SPEED ( 0.2f );
 
 #define CURSOR_WIDTH	(50.0f) /* [px] */
 #define CURSOR_HEIGHT   (50.0f) /* [px] */
@@ -44,28 +51,22 @@ struct StartCfg{
 class CGame : CInputInterface {
 private:	
 	VSLogLib log;
-	VSMathLib *vsml;
-	VSShaderLib basicShader;
+	VSMathLib & vsml;
+	VSShaderLib basicShader, lineShader;
 	VSFontLib basicFont;
 	unsigned int aSentence, debugInfo;
 
-	VSResModelLib Model1, Model2;
+	EulerAngle modelRot;
+	glm::vec3 rayDir;
 
-
-	CScene *scene;
-	CPhysics *physics;
+	VSBasicRender shapeRender;
 	CCamera *Cam;
 
 	/* Mouse position on XY plane */
 	glm::vec2 mouse2DPosition;
 	glm::vec2 normalizedMousePos;
 
-	/*Test*/
-	CTexture *tex;
-	b2MouseJoint *Mjoint;
 	bool lockCam;
-
-	CSprite *mouseSprite;
 
 	StartCfg startCfg;
 	SDL_Window* Win;
@@ -84,14 +85,15 @@ private:
 	void InitVS();
 	void SetupShaders();
 
-
 	void Update(uint32 dt);
 	void Draw(uint32 dt);
 	void CalculateMousePos(const MouseArgs *Args);
 	void NormalizeMousePos(uint32 screenWidth, uint32 screenHeight, uint32 inX, uint32 inY, float32 &outX, float32 &outY);
 	void ParseArgs(int argc, char* args[]);
 	void LoadConfig(const char* filename);
+	void LoadGameMap(const char* filename);
 
+	void DrawAxes(void); 
 	
 protected:
 	void OnKeyDown(const SDL_Keycode *Key);

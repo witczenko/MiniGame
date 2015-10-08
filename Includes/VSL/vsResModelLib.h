@@ -108,6 +108,8 @@ public:
 							GLenum textureType = GL_TEXTURE_2D);
 #endif
 
+	//get bounding box for root node
+	void getBoundingBox(aiVector3D & min, aiVector3D & max);
 //protected:
 
 	// A model can be made of many meshes. Each is stored
@@ -143,6 +145,9 @@ private:
 	const aiScene* pScene;
 
 	bool pUseAdjacency;
+
+	//model bounding box 
+	aiVector3D bbmin, bbmax;
 
 #ifdef _VSL_TEXTURE_WITH_DEVIL
 

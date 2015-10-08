@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 #include "types.h"
 
-
-
 class CCamera
 {
 private:

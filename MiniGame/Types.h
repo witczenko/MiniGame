@@ -15,7 +15,8 @@ typedef double float64;
 
 
 /* math stuff */
-#define DEG_TO_RAD(x) x*(3.141592f/180.0f)
+#define D2R(x) x*(3.141592f/180.0f)
+#define R2D(x) x*57.2957795f
 
 
 /* -- */
@@ -38,6 +39,15 @@ struct Rect3D{
 
 	Rect3D(float x, float y, float z, float w, float h) : x(x), y(y), z(z),w(w), h(h){};
 	Rect3D(){};
+};
+
+struct EulerAngle{
+	float32 y;
+	float32 p;
+	float32 r;
+
+	EulerAngle(float32 y, float32 p, float32 r) : y(y), p(p), r(r) {};
+	EulerAngle(){};
 };
 
 #endif // TYPES_H

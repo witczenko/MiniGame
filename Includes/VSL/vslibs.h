@@ -36,6 +36,7 @@
 #include "vsProfileLib.h"
 #include "vsResourceLib.h"
 #include "vsResModelLib.h"
+#include "vsBasicRender.h"
 
 #ifdef _VSL_TEXTURE_WITH_DEVIL
 

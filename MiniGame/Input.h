@@ -9,7 +9,7 @@
 #define INPUT_H
 
 #include "Types.h"
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include <vector>
 #include <iostream>
 

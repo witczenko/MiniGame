@@ -50,7 +50,7 @@ private:
 
 
 /* */
-class CPhysicalObject : public CSprite {
+class CPhysicalObject {
 	friend CPhysics;
 
 private:
@@ -60,7 +60,7 @@ private:
 	b2FixtureDef fixtureDef;
 	b2PolygonShape dynamicBox;
 public:
-	CPhysicalObject(glm::vec3 pos, GLfloat width, GLfloat height, CTexture *Texture, CShaderProgram* pShaderProgram);
+	CPhysicalObject(glm::vec3 pos, GLfloat width, GLfloat heigh);
 	virtual ~CPhysicalObject();
 };
 

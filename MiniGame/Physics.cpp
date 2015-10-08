@@ -88,8 +88,8 @@ void CPhysics::Update(uint32 dt){
 
 		for (auto it_object = objects.begin(); it_object != objects.end(); it_object++){
 			b2Body *objBody = (*it_object)->body;
-			(*it_object)->SetPos(glm::vec3(objBody->GetPosition().x, objBody->GetPosition().y, (*it_object)->Pos.z));
-			(*it_object)->Rotatef(objBody->GetAngle(), glm::vec3(0.0f, 0.0f, 1.0f));
+			//(*it_object)->SetPos(glm::vec3(objBody->GetPosition().x, objBody->GetPosition().y, (*it_object)->Pos.z));
+			//(*it_object)->Rotatef(objBody->GetAngle(), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 
 	}
@@ -178,23 +178,18 @@ void CPhysics::DeleteJoint(b2Joint *joint){
 }
 
 
-
-
-
 /* CPhysicalObject */
 
-CPhysicalObject::CPhysicalObject(glm::vec3 pos, GLfloat width, GLfloat height, CTexture *Texture, CShaderProgram* pShaderProgram):
-CSprite(pos, width, height, Texture, pShaderProgram),
+CPhysicalObject::CPhysicalObject(glm::vec3 pos, GLfloat width, GLfloat height):
 body(NULL),
 mass(1.0f)
-
 {	
 	
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set( Pos.x, Pos.y);
+	bodyDef.position.Set( pos.x, pos.y);
 
 	// Define another box shape for our dynamic body.
-	dynamicBox.SetAsBox(Width / 2.0f - 0.01f, Height / 2.0f - 0.01f);
+	dynamicBox.SetAsBox(width / 2.0f - 0.01f, height / 2.0f - 0.01f);
 
 	// Define the dynamic body fixture.
 	fixtureDef.shape = &dynamicBox;

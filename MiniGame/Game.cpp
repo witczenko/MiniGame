@@ -1,9 +1,16 @@
 #include "Game.h"
-#include "Sprite.h"
+#include <glm/gtc/type_ptr.hpp>
 
-//test varibales 
-static bool boxEmmiter = false;
-static float angle = 0;
+#define AXES_LENGTH (10e5)
+
+float red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+float reda50[4] = { 1.0f, 0.0f, 0.0f, 0.5f };
+float green[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+float greena50[4] = { 0.0f, 1.0f, 0.0f, 0.5f };
+float blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+uint32 TEXTURE_1, TEXTURE_2;
+CSpriteRenderer spriteRenderer;
 
 CGame::CGame(int argc, char* args[]) :
 Win(0),
@@ -11,12 +18,10 @@ MainGlContext(NULL),
 GlobalTime(0),
 GameRunning(true),
 mouse2DPosition(0.0f, 0.0f),
-Mjoint(NULL),
 lockCam(false),
-mouseSprite(NULL)
+vsml(*VSMathLib::getInstance())
 {
 	log.addMessage("Start logging...");	
-	
 	/* Prepare initial config (basic settings) */
 	startCfg.fullScreen = false;
 	startCfg.winHeight = HEIGHT;
@@ -31,11 +36,7 @@ mouseSprite(NULL)
 CGame::~CGame()
 {
 	log.dumpToFile("GAME_LOG.txt");
-
-	delete physics;
-	delete scene;
 	delete Cam;
-	delete tex;
 
 	SDL_GL_DeleteContext(MainGlContext);
 	SDL_DestroyWindow(Win);
@@ -96,8 +97,6 @@ void CGame::LoadConfig(const char* filename){
 	pElem = hRoot.FirstChildElement("Graphics").ToElement();
 	pElem->QueryIntAttribute("Vsync", &startCfg.vSync);
 
-
-
 }
 
 bool CGame::Init(){
@@ -110,7 +109,7 @@ bool CGame::Init(){
 		return false;
 	}
 
-	SDL_ShowCursor(SDL_DISABLE);
+	//SDL_ShowCursor(SDL_DISABLE);
 
 	//SET OPENGL CONTEXT TO 3.1
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR);
@@ -176,13 +175,18 @@ bool CGame::Init(){
 		VSGLInfoLib::getGeneralInfo();
 
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 		glEnable(GL_MULTISAMPLE);
 		glClearColor(.3f, .3f, .3f, 1.0f);
 
 		// Accept fragment if it closer to the camera than the former one
 		glDepthFunc(GL_LESS);
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		//wireframe mode
+		//glPolygonMode(GL_FRONT, GL_LINE);
+		//glPolygonMode(GL_BACK, GL_LINE);
 	}
 	else{	
 		std::cerr << glewGetErrorString(glewError); 
@@ -197,19 +201,14 @@ bool CGame::Init(){
 void CGame::InitVS(){
 	/* VS LIB */
 
-	vsml = VSMathLib::getInstance();
 	// Set both matrices to the identity matrix
-	vsml->loadIdentity(VSMathLib::VIEW);
-	vsml->loadIdentity(VSMathLib::MODEL);
-
+	vsml.loadIdentity(VSMathLib::VIEW);
+	vsml.loadIdentity(VSMathLib::MODEL);
 	// set the material's block name
 	//VSResourceLib::setMaterialBlockName("Material");
-
-	// Init VSML
-	vsml = VSMathLib::getInstance();
 	//vsml->setUniformBlockName("Matrices");
-	vsml->setUniformName(VSMathLib::PROJ_VIEW_MODEL, "projViewModelMatrix");
-	vsml->setUniformName(VSMathLib::NORMAL, "normalMatrix");
+	vsml.setUniformName(VSMathLib::PROJ_VIEW_MODEL, "projViewModelMatrix");
+	vsml.setUniformName(VSMathLib::NORMAL, "normalMatrix");
 
 	bool loaded = basicFont.load("fonts/couriernew10");
 	if (loaded == false){
@@ -220,10 +219,10 @@ void CGame::InitVS(){
 
 	basicFont.setFixedFont(true);
 	basicFont.setColor(1.0f, 0.5f, 0.25f, 1.0f);
-	aSentence = basicFont.genSentence();
 	debugInfo = basicFont.genSentence();
 
-	basicFont.prepareSentence(aSentence, "Wbrew powszechnej opinii skrzywienie krêgos³upa nie jest nastêpstwem z³ej postawy czy niew³aœciwych \n nawyków podczas siedzenia. Skolioza nie jest spowodowana równie¿ noszeniem plecaka czy teczki stale w jednej rêce. 85%\n skrzywieñ krêgos³upa o charakterze strukturalnym to skoliozy idiopatyczne, czyli o nieznanej przyczynie.");
+	shapeRender.Init();
+
 
 }
 
@@ -246,8 +245,10 @@ void CGame::SetupShaders(){
 	//VSGLInfoLib::getUniformsInfo(basicShader.getProgramIndex());
 	printf("%s\n", basicShader.getAllInfoLogs().c_str());
 	
-	basicShader.setStandardMaterialUniforms();
+	//basicShader.setStandardMaterialUniforms();
 	basicShader.setUniform("texUnit", 0);
+
+	
 }
 
 
@@ -261,35 +262,33 @@ void CGame::Update(uint32 dt){
 
 void CGame::Draw(uint32 dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//scene->Draw(Cam);
 
 	basicShader.useProgram();
 
-	vsml->loadIdentity(VSMathLib::VIEW);
-	vsml->loadIdentity(VSMathLib::MODEL);
+	static int time = 0;
+
+	time += dt;
+
+	vsml.loadIdentity(VSMathLib::VIEW);
+	vsml.loadIdentity(VSMathLib::MODEL);
 
 	// set camera
-	vsml->lookAt( Cam->GetPosition().x, Cam->GetPosition().y, Cam->GetPosition().z, 
+	vsml.lookAt(Cam->GetPosition().x, Cam->GetPosition().y, Cam->GetPosition().z, 
 				  Cam->GetTarget().x, Cam->GetTarget().y, Cam->GetTarget().z, 0, 1, 0);
-	
-	//vsml->pushMatrix(VSMathLib::MODEL);
-	Model2.render();
-	//vsml->popMatrix(VSMathLib::MODEL);
-	
-	
-	vsml->pushMatrix(VSMathLib::MODEL);
 
-	angle += (dt / 10.0f);
-	vsml->rotate(angle/5.0, 1.0f, 0.0f, 0.0f);
-	vsml->scale(0.2, 0.2, 0.2);
+	
+	vsml.pushMatrix(VSMathLib::MODEL);
 
-	vsml->translate(VSMathLib::MODEL, 0.0f, sin(SDL_GetTicks() / 100.0f), 2.0f);
-	Model1.render();
-	vsml->popMatrix(VSMathLib::MODEL);
+	vsml.rotate(modelRot.r, 0.0f, 0.0f, 1.0f);
+	vsml.rotate(modelRot.y, 0.0f, 1.0f, 0.0f);
+	vsml.rotate(modelRot.p, 1.0f, 0.0f, 1.0f);
+	DrawAxes();
+	basicShader.setUniform("texCount", 1);
+	spriteRenderer.Render();
 
-	//basicFont.setColor( 1.0f, 1.0f, 1.0f, 0.8f);		
+	vsml.popMatrix(VSMathLib::MODEL);
+
 	basicFont.renderSentence(10, 10, debugInfo);	
-	basicFont.renderSentence(10, 300, aSentence);
 
 	SDL_GL_SwapWindow(Win);
 }
@@ -307,18 +306,23 @@ bool CGame::Run(){
 	InitVS();
 	SetupShaders();
 
-	vsml->loadIdentity(VSMathLib::PROJECTION);
-	vsml->perspective(53.13f, ASPECT, 0.1f, 10000.0f);
+	vsml.loadIdentity(VSMathLib::PROJECTION);
+	vsml.perspective(53.13f, ASPECT, 0.1f, 10000.0f);
 
-	//scene = new CScene(WIDTH, HEIGHT);
-	physics = new CPhysics;
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
 
-	bool loaded = Model1.load("gfx/ico.obj");
-	bool loaded2 = Model2.load("gfx/map_01.obj");
-	//bool loaded = mapModel.load("gfx/ico.obj");
-	Model1.addTexture(0, "gfx/grid_color.png");
-	Model2.addTexture(0, "gfx/grid_color.png");
+	TEXTURE_1 = VSResourceLib::loadRGBATexture("gfx/grid_color.png");
+	TEXTURE_2 = VSResourceLib::loadRGBATexture("gfx/bg.jpg");
+
+
+	//Sprite Renderer TEST
+	spriteRenderer.Init();
+
+	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
+
+	spriteRenderer.AddSprite(new CSprite(init_pos2, 1.5f*5, 1.0f*5, TEXTURE_2));
+	spriteRenderer.AddSprite(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1));
 
 	char fps[64] = "";
 	uint32 acc = 0;
@@ -356,22 +360,37 @@ bool CGame::Run(){
 }
 
 void CGame::OnKeyDown(const SDL_Keycode *Key){
-	if (*Key == SDLK_ESCAPE) GameRunning = false;
+	if (*Key == SDLK_ESCAPE){
+		GameRunning = false;
+	}else
 	if (*Key == SDLK_1) {
 		Cam->SetPosition(glm::vec3(0.0f, 0.0f, 4.0f));
 		Cam->SetTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-	}
+	}else
 	if (*Key == SDLK_2) {
 		lockCam = true;
-	}
+	}else
 	if (*Key == SDLK_3) {
 		lockCam = false;
-	}
+	}else
 	if (*Key == SDLK_4) {
-		boxEmmiter = true;
-	}
+		//boxEmmiter = true;
+	}else
 	if (*Key == SDLK_5) {
-		boxEmmiter = false;
+	//	boxEmmiter = false;
+	}else
+	if (*Key == SDLK_m){
+		modelRot.y += 10.0f;
+	}
+	else
+	if (*Key == SDLK_n){
+		modelRot.y -= 10.0f;
+	}else
+	if (*Key == SDLK_b){
+		modelRot.p += 10.0f;
+	}
+	else if (*Key == SDLK_v){
+		modelRot.p -= 10.0f;
 	}
 }
 
@@ -391,10 +410,12 @@ void CGame::OnMouseMove(const MouseArgs *Args){
 			glm::vec3 CamPos = Cam->GetPosition();
 			glm::vec3 CamTarget = Cam->GetTarget();
 
-			CamPos.x += (float32)Args->dx / 100.0f;
-			CamPos.y -= (float32)Args->dy / 100.0f;
-			CamTarget.x += (float32)Args->dx / 100.0f;
-			CamTarget.y -= (float32)Args->dy / 59.0f;
+			CamPos.x += (float32)(Args->dx / 200.0f)*CAM_SPEED;
+			CamPos.y -= (float32)(Args->dy / 200.0f)*CAM_SPEED;
+
+
+			CamTarget.x += (float32)(Args->dx / 100.0f)*CAM_SPEED;
+			CamTarget.y -= (float32)(Args->dy / 59.0f)*CAM_SPEED;
 
 			Cam->SetPosition(CamPos);
 			Cam->SetTarget(CamTarget);
@@ -420,17 +441,12 @@ void CGame::OnMouseButtonDown(const MouseArgs *Args){
 
 void CGame::OnMouseButtonUp(const MouseArgs *Args){
 	if (Args->button == MLeft){
-		if (Mjoint){
-			std::cout << "Delete Mjoint" << std::endl;
-			physics->DeleteJoint(Mjoint);
-			Mjoint = NULL;
-		}
 	}
 }
 
 void CGame::OnMouseWheelBackward(){
 	glm::vec3 CamPos = Cam->GetPosition();
-	CamPos.z += 0.6;
+	CamPos.z += 0.6f;
 	Cam->SetPosition(CamPos);
 }
 
@@ -438,7 +454,7 @@ void CGame::OnMouseWheelForward(){
 	glm::vec3 CamPos = Cam->GetPosition();
 	if ((CamPos.z - 0.6) > 0.1)
 	{
-		CamPos.z -= 0.6;
+		CamPos.z -= 0.6f;
 		Cam->SetPosition(CamPos);
 	}
 }
@@ -446,19 +462,39 @@ void CGame::OnMouseWheelForward(){
 void CGame::CalculateMousePos(const MouseArgs *Args){
 	/* normalize mouse position  */
 	NormalizeMousePos(WIDTH, HEIGHT, Args->x, Args->y, normalizedMousePos.x, normalizedMousePos.y);
-
 	glm::vec3 camPos = glm::vec3(Cam->GetPosition().x, Cam->GetPosition().y, Cam->GetPosition().z);
-	glm::vec4 mouse_clip = glm::vec4(normalizedMousePos.x, normalizedMousePos.y, -1.0, 1.0);
-	glm::vec4 ray_eye = glm::inverse(Cam->GetProjection()) * mouse_clip;
-	ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
-	glm::vec3 ray = glm::normalize(glm::vec3(glm::inverse(Cam->GetView()) * ray_eye));
+	rayDir = GameUtils::CalcCamRay(normalizedMousePos, Cam->GetProjection(), Cam->GetView());
 
 	/* mouse cursor coordinates on XY plane */
-	mouse2DPosition.x = (ray.x * ((-camPos.z) / ray.z)) + camPos.x;
-	mouse2DPosition.y = (ray.y * ((-camPos.z) / ray.z)) + camPos.y;
+	mouse2DPosition.x = (rayDir.x * ((-camPos.z) / rayDir.z)) + camPos.x;
+	mouse2DPosition.y = (rayDir.y * ((-camPos.z) / rayDir.z)) + camPos.y;
 };
 
 void CGame::NormalizeMousePos(uint32 screenWidth, uint32 screenHeight, uint32 inX, uint32 inY, float32 &outX, float32 &outY){
 	outX = ((2.0f * inX) / (float)(screenWidth)) - 1.0f;
 	outY = 1.0f - ((2.0f * inY) / (float)screenHeight);
+}
+
+
+void CGame::DrawAxes(void){
+	//render Axis 
+	const float length = AXES_LENGTH;
+	vsml.pushMatrix(VSMathLib::MODEL);
+	float xa[6] = { -length, 0.0f, 0.0f, length, 0.0f, 0.0f };
+	float ya[6] = { 0.0f, -length, 0.0f, 0.0f, length, 0.0f };
+	float za[6] = { 0.0f, 0.0f, length, 0.0f, 0.0f, -length };
+
+	//shapeRender.SetColor(red);
+	shapeRender.DrawLine(xa, 2);
+	//shapeRender.SetColor(green);
+	shapeRender.DrawLine(ya, 2);
+	//shapeRender.SetColor(blue);
+	shapeRender.DrawLine(za, 2);
+
+	vsml.popMatrix(VSMathLib::MODEL);
+}
+
+
+void CGame::LoadGameMap(const char* filename){
+
 }
