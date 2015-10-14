@@ -12,7 +12,7 @@
 #include "VSL/vslibs.h"
 
 #include "GameUtils.h"
-
+#include "Scene.h"
 #include "GameObject.h"
 #include "Sprite.h"
 #include "TextureManager.h"
@@ -57,11 +57,11 @@ private:
 	VSFontLib basicFont;
 	unsigned int aSentence, debugInfo;
 
-	EulerAngle modelRot;
 	glm::vec3 rayDir;
 
 	VSBasicRender shapeRender;
 	CCamera *Cam;
+	CScene *MainScene;
 
 	/* Mouse position on XY plane */
 	glm::vec2 mouse2DPosition;

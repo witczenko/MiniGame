@@ -1,7 +1,8 @@
 #include "Animation.h"
 #include <stdlib.h>
 
-CSprtieAnimation::CSprtieAnimation():
+CSprtieAnimation::CSprtieAnimation() : 
+CSprite(),
 is_loaded(false),
 loaded_frames(0),
 anim_time(),
@@ -60,6 +61,8 @@ void CSprtieAnimation::Update(uint32 dt){
 
 		anim_time = 0;
 	}
+
+	this->AssingTexture(frames[current_frame]);
 
 }
 

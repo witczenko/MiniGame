@@ -3,7 +3,7 @@
 #include "Sprite.h"
 
 /* Sprite animation */
-class CSprtieAnimation
+class CSprtieAnimation : public CSprite
 {
 public:
 	CSprtieAnimation();

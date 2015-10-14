@@ -29,4 +29,8 @@ glm::vec3 GameObject::GetPos() const{
 	return pos;
 }
 
+void GameObject::SetPos(glm::vec3 pos){
+	this->pos = pos;
+}
+
 

@@ -16,6 +16,7 @@ class CSprite :public GameObject
 {
 public:
 	CSprite(glm::vec3 pos, float32 width, float32 height, uint32 textureId);
+	CSprite();
 
 	virtual ~CSprite();
 	
@@ -23,9 +24,12 @@ public:
 	uint32 GetTextureId() const;
 	float32 GetWidth() const;
 	float32 GetHeight() const;
+	float32 GetAngleZ() const;
+	void SetAngleZ(float32 angle);
 
 private:
 	GLfloat width, height;
+	GLfloat angleZ;
 	uint32 texId;
 };
 

@@ -5,7 +5,17 @@ CSprite::CSprite(glm::vec3 pos, float32 width, float32 height, uint32 textureId)
 GameObject(pos),
 width(width),
 height(height),
-texId(textureId)
+texId(textureId),
+angleZ(0.0f)
+{
+}
+
+CSprite::CSprite():
+GameObject(glm::vec3(0.0f, 0.0f, 0.0f)),
+width(1.0),
+height(1.0),
+texId(0),
+angleZ(0.0f)
 {
 }
 
@@ -28,6 +38,14 @@ float CSprite::GetWidth() const{
 
 float CSprite::GetHeight() const{
 	return height;
+}
+
+float CSprite::GetAngleZ() const{
+	return angleZ;
+}
+
+void CSprite::SetAngleZ(float32 angle){
+	angleZ = angle;
 }
 
 
@@ -91,6 +109,7 @@ void CSpriteRenderer::Render()
 	{
 		vsml.pushMatrix(VSMathLib::MODEL);
 		vsml.translate(sprite->GetPos().x, sprite->GetPos().y, sprite->GetPos().z);
+		vsml.rotate(sprite->GetAngleZ(), 0.0, 0.0, 1.0);
 		vsml.scale(sprite->GetWidth(), sprite->GetHeight(), 0.0f);
 
 		vsml.matricesToGL();

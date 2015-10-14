@@ -5,16 +5,11 @@
 
 #define AXES_LENGTH (10e5)
 
-float red[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
-float reda50[4] = { 1.0f, 0.0f, 0.0f, 0.5f };
-float green[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-float greena50[4] = { 0.0f, 1.0f, 0.0f, 0.5f };
-float blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-
-CSpriteRenderer spriteRenderer;
 CTextureManager textureMan;
-CSprtieAnimation spriteAnim;
-CSprite *fireSprite;
+
+float red[4] = { 1.0, 0.0, 0.0, 1.0 };
+float green[4] = { 0.0, 1.0, 0.0, 1.0 };
+float blue[4] = { 0.0, 0.0, 1.0, 1.0 };
 
 CGame::CGame(int argc, char* args[]) :
 Win(0),
@@ -23,6 +18,7 @@ GlobalTime(0),
 GameRunning(true),
 mouse2DPosition(0.0f, 0.0f),
 lockCam(false),
+MainScene(NULL),
 vsml(*VSMathLib::getInstance())
 {
 	log.addMessage("Start logging...");	
@@ -41,6 +37,7 @@ CGame::~CGame()
 {
 	log.dumpToFile("GAME_LOG.txt");
 	delete Cam;
+	delete MainScene;
 
 	SDL_GL_DeleteContext(MainGlContext);
 	SDL_DestroyWindow(Win);
@@ -203,16 +200,12 @@ bool CGame::Init(){
 
 
 void CGame::InitVS(){
-	/* VS LIB */
 
-	// Set both matrices to the identity matrix
 	vsml.loadIdentity(VSMathLib::VIEW);
 	vsml.loadIdentity(VSMathLib::MODEL);
-	// set the material's block name
-	//VSResourceLib::setMaterialBlockName("Material");
-	//vsml->setUniformBlockName("Matrices");
 	vsml.setUniformName(VSMathLib::PROJ_VIEW_MODEL, "projViewModelMatrix");
 	vsml.setUniformName(VSMathLib::NORMAL, "normalMatrix");
+
 
 	bool loaded = basicFont.load("fonts/couriernew10");
 	if (loaded == false){
@@ -226,8 +219,6 @@ void CGame::InitVS(){
 	debugInfo = basicFont.genSentence();
 
 	shapeRender.Init();
-
-
 }
 
 void CGame::SetupShaders(){
@@ -259,19 +250,16 @@ void CGame::SetupShaders(){
 
 void CGame::Update(uint32 dt){
 	CInputManager::GetInputManager().Update(dt);
-	spriteAnim.Update(dt);
-	fireSprite->AssingTexture(spriteAnim.GetFrame());
+	MainScene->Update(dt);
 	
 }
 
 
 void CGame::Draw(uint32 dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	basicShader.useProgram();
 
 	static int time = 0;
-
 	time += dt;
 
 	vsml.loadIdentity(VSMathLib::VIEW);
@@ -284,11 +272,8 @@ void CGame::Draw(uint32 dt){
 	
 	vsml.pushMatrix(VSMathLib::MODEL);
 
-	vsml.rotate(modelRot.r, 0.0f, 0.0f, 1.0f);
-	vsml.rotate(modelRot.y, 0.0f, 1.0f, 0.0f);
-	vsml.rotate(modelRot.p, 1.0f, 0.0f, 1.0f);	
 	basicShader.setUniform("texCount", 1);
-	spriteRenderer.Render();
+	MainScene->Draw();
 
 	vsml.popMatrix(VSMathLib::MODEL);
 
@@ -315,17 +300,27 @@ bool CGame::Run(){
 	vsml.perspective(53.13f, ASPECT, 0.1f, 10000.0f);
 
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
+	MainScene = new CScene;
 
-	//Sprite Renderer TEST
-	spriteRenderer.Init();
+	MainScene->Init();
 	textureMan.Init(); // <-- Here all textures are loaded
-
-	if (spriteAnim.LoadAnimation("gfx/particles_fireball_wind/00", 50)){
+	/*
+	if (spriteAnim.LoadAnimation("gfx/Opening/Opening2__00", 16) ){
 		std::cout << "\n Loaded animation!\n";
 	}else
 		std::cout << "\n Loading animation FAILED!\n";
 
+	if (spriteAnim2.LoadAnimation("gfx/Firing/Firing2__00", 16)) {
+		std::cout << "\n Loaded second animation!\n";
+	}
+	else
+		std::cout << "\n Failed to load second animation!\n";
+
 	spriteAnim.SetFPS(24);
+	spriteAnim2.SetFPS(24);
+	*/
+
+
 
 	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
@@ -334,12 +329,19 @@ bool CGame::Run(){
 	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 1.0f);
 
-	fireSprite = new CSprite(init_pos3, 0.5f, 0.5f, spriteAnim.GetFrame());
+	CSprtieAnimation *spriteAnim = new CSprtieAnimation();
+	spriteAnim->LoadAnimation("gfx/Opening/Opening2__00", 16);
+	spriteAnim->SetPos(init_pos3);
+	//fireSprite = new CSprite(init_pos3, 0.5f, 0.5f, spriteAnim.GetFrame());
+	//fireSprite2 = new CSprite(init_pos4, 0.5f, 0.5f, spriteAnim2.GetFrame());
 
-	spriteRenderer.AddSprite(new CSprite(init_pos2, 1.5f*5, 1.0f*5, TEXTURE_2));
-	spriteRenderer.AddSprite(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1));
-	spriteRenderer.AddSprite(fireSprite);
+	MainScene->AddObject(new CSprite(init_pos2, 1.5f*5, 1.0f*5, TEXTURE_2), SPRITE);
+	MainScene->AddObject(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1), SPRITE);
+	MainScene->AddObject(spriteAnim, SPRITE_ANIM);
+	//spriteRenderer.AddSprite(fireSprite);
+	//spriteRenderer.AddSprite(fireSprite2);
 
 	char fps[64] = "";
 	uint32 acc = 0;
@@ -397,17 +399,17 @@ void CGame::OnKeyDown(const SDL_Keycode *Key){
 	//	boxEmmiter = false;
 	}else
 	if (*Key == SDLK_m){
-		modelRot.y += 10.0f;
+		//modelRot.y += 10.0f;
 	}
 	else
 	if (*Key == SDLK_n){
-		modelRot.y -= 10.0f;
+		//modelRot.y -= 10.0f;
 	}else
 	if (*Key == SDLK_b){
-		modelRot.p += 10.0f;
+		//modelRot.p += 10.0f;
 	}
 	else if (*Key == SDLK_v){
-		modelRot.p -= 10.0f;
+		//modelRot.p -= 10.0f;
 	}
 }
 
