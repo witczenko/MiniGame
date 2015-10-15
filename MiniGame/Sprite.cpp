@@ -48,7 +48,12 @@ void CSprite::SetAngleZ(float32 angle){
 	angleZ = angle;
 }
 
-
+void CSprite::SetWidth(float32 width){
+	this->width = width;
+}
+void CSprite::SetHeight(float32 height){
+	this->height = height;
+}
 
 
 /* SPRITE RENDERER*/
@@ -60,12 +65,6 @@ CSpriteRenderer::CSpriteRenderer() :vsml(*VSMathLib::getInstance())
 
 CSpriteRenderer::~CSpriteRenderer()
 {
-	for (auto sprite : spriteCollection)
-	{
-		if (sprite)
-			delete sprite;
-	}
-
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &UV);
 	glDeleteVertexArrays(1, &VAO);

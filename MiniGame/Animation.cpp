@@ -1,7 +1,7 @@
 #include "Animation.h"
 #include <stdlib.h>
 
-CSprtieAnimation::CSprtieAnimation() : 
+CSpriteAnimation::CSpriteAnimation() : 
 CSprite(),
 is_loaded(false),
 loaded_frames(0),
@@ -11,17 +11,27 @@ frame_time(33)
 {
 }
 
+CSpriteAnimation::CSpriteAnimation(glm::vec3 pos, float32 width, float32 height, uint32 textureId) :
+CSprite(pos, width, height, textureId),
+is_loaded(false),
+loaded_frames(0),
+anim_time(),
+current_frame(0),
+frame_time(33)
+{
+}
 
-CSprtieAnimation::~CSprtieAnimation()
+
+CSpriteAnimation::~CSpriteAnimation()
 {
 	cleanUp();
 }
 
-uint32 CSprtieAnimation::GetFrame() const{
+uint32 CSpriteAnimation::GetFrame() const{
 	return frames[current_frame];
 }
 
-bool CSprtieAnimation::LoadAnimation(const std::string & prefix, uint32 size){
+bool CSpriteAnimation::LoadAnimation(const std::string & prefix, uint32 size){
 	std::string texture_name;
 	char number[10];
 	
@@ -46,11 +56,11 @@ bool CSprtieAnimation::LoadAnimation(const std::string & prefix, uint32 size){
 	return true;
 }
 
-void CSprtieAnimation::SetFPS(uint32 fps){
+void CSpriteAnimation::SetFPS(uint32 fps){
 	frame_time = 1000 / fps;
 }
 
-void CSprtieAnimation::Update(uint32 dt){
+void CSpriteAnimation::Update(uint32 dt){
 	anim_time += dt;
 	if (anim_time > frame_time){
 		if (current_frame < loaded_frames-1)
@@ -66,7 +76,7 @@ void CSprtieAnimation::Update(uint32 dt){
 
 }
 
-void CSprtieAnimation::cleanUp(){
+void CSpriteAnimation::cleanUp(){
 	for (uint32 i = 0; i < loaded_frames; i++){
 		glDeleteTextures(1, &frames[i]);
 	}

@@ -37,6 +37,9 @@
 #define CURSOR_WIDTH	(50.0f) /* [px] */
 #define CURSOR_HEIGHT   (50.0f) /* [px] */
 
+#define FPS_LOCK	(1)
+#define FPS		    (45)
+
 //GL_Version 
 #define GL_MAJOR ( 3 )
 #define GL_MINOR ( 1 )

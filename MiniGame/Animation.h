@@ -3,11 +3,12 @@
 #include "Sprite.h"
 
 /* Sprite animation */
-class CSprtieAnimation : public CSprite
+class CSpriteAnimation : public CSprite
 {
 public:
-	CSprtieAnimation();
-	~CSprtieAnimation();
+	CSpriteAnimation();
+	CSpriteAnimation(glm::vec3 pos, float32 width, float32 height, uint32 textureId);
+	~CSpriteAnimation();
 
 	uint32 GetFrame() const; //return texture ID 
 	bool LoadAnimation(const std::string & prefix, uint32 size);

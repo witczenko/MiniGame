@@ -19,6 +19,8 @@ CTextureManager::~CTextureManager()
 
 void CTextureManager::Init(){
 	//Here you can load texures!
+	LoadTexture("gfx/no_texture.png");
+
 	LoadTexture("gfx/smieja.png");
 	LoadTexture("gfx/box.png");
 	LoadTexture("gfx/cursor.png");

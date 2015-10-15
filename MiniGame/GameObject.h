@@ -5,16 +5,19 @@
 #include <glm\glm.hpp>
 #include "Input.h"
 
-enum OBJECT_TYPE{
-	UNDEFINED = 0,
-	PLAYER,
-	SPRITE,
-	SPRITE_ANIM
-};
+
 
 class GameObject : public CInputManager
 {
 public:
+	enum OBJECT_TYPE{
+		UNDEFINED = 0,
+		PLAYER,
+		SPRITE,
+		SPRITE_ANIM,
+		TYPE_COUNT,
+	};
+
 	GameObject();
 	GameObject(glm::vec3 init_pos);
 	~GameObject();

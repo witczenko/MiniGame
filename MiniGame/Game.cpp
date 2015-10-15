@@ -247,13 +247,97 @@ void CGame::SetupShaders(){
 }
 
 
+bool CGame::Run(){
+
+	uint32 OldTime = 0;
+	uint32 CurrentTime = 0;
+
+	/* Init Game */
+	if (Init() == false){
+		return false;
+	}
+
+	InitVS();
+	SetupShaders();
+
+	vsml.loadIdentity(VSMathLib::PROJECTION);
+	vsml.perspective(53.13f, ASPECT, 0.1f, 10000.0f);
+
+	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
+	MainScene = new CScene;
+
+	MainScene->Init();
+	textureMan.Init(); // <-- Here all textures are loaded
+
+	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
+	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
+
+
+	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 1.0f);
+
+	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
+	spriteAnim->LoadAnimation("gfx/Opening/Opening__00", 7);
+	spriteAnim->SetPos(init_pos3);
+	spriteAnim->SetFPS(24);
+	spriteAnim->SetHeight(0.4);
+	spriteAnim->SetWidth(0.4);
+
+
+	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
+	MainScene->AddObject(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1), GameObject::SPRITE);
+	MainScene->AddObject(spriteAnim, GameObject::SPRITE_ANIM);
+
+	char fps[64] = "";
+	uint32 acc = 0;
+
+	/* Main Loop */
+	while (GameRunning){
+		GlobalTime = SDL_GetTicks();
+
+		//Time stuff
+		OldTime = CurrentTime;
+		CurrentTime = SDL_GetTicks();
+		dt = (CurrentTime - OldTime);
+
+		//update fps every 1000ms - PRIMITIVE!
+		acc += dt;
+		if (acc > 200)
+		{
+			acc = 0;
+			if (startCfg.vSync)
+				sprintf(fps, "FPS %f \nVSYNC ON", (1000.0f / dt));
+			else
+				sprintf(fps, "FPS %f \nVSYNC OFF", (1000.0f / dt));
+			basicFont.prepareSentence(debugInfo, fps);
+		}
+
+		//Handle input
+		Update(dt);
+
+		//Draw 
+		Draw(dt);
+
+		/* //Do poprawki - regulacja FPS 
+		if (FPS_LOCK){
+			int delay = (1000 / FPS) - dt;
+			if (delay > 0)
+				SDL_Delay(delay);
+		}
+		*/
+	}
+
+
+	return true;
+}
 
 void CGame::Update(uint32 dt){
 	CInputManager::GetInputManager().Update(dt);
 	MainScene->Update(dt);
-	
-}
 
+}
 
 void CGame::Draw(uint32 dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -283,100 +367,7 @@ void CGame::Draw(uint32 dt){
 	SDL_GL_SwapWindow(Win);
 }
 
-bool CGame::Run(){
 
-	uint32 OldTime = 0;
-	uint32 CurrentTime = 0;
-
-	/* Init Game */
-	if (Init() == false){
-		return false;
-	}
-
-	InitVS();
-	SetupShaders();
-
-	vsml.loadIdentity(VSMathLib::PROJECTION);
-	vsml.perspective(53.13f, ASPECT, 0.1f, 10000.0f);
-
-	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
-	MainScene = new CScene;
-
-	MainScene->Init();
-	textureMan.Init(); // <-- Here all textures are loaded
-	/*
-	if (spriteAnim.LoadAnimation("gfx/Opening/Opening2__00", 16) ){
-		std::cout << "\n Loaded animation!\n";
-	}else
-		std::cout << "\n Loading animation FAILED!\n";
-
-	if (spriteAnim2.LoadAnimation("gfx/Firing/Firing2__00", 16)) {
-		std::cout << "\n Loaded second animation!\n";
-	}
-	else
-		std::cout << "\n Failed to load second animation!\n";
-
-	spriteAnim.SetFPS(24);
-	spriteAnim2.SetFPS(24);
-	*/
-
-
-
-	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
-	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
-
-
-	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, 1.0f);
-	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 1.0f);
-
-	CSprtieAnimation *spriteAnim = new CSprtieAnimation();
-	spriteAnim->LoadAnimation("gfx/Opening/Opening2__00", 16);
-	spriteAnim->SetPos(init_pos3);
-	//fireSprite = new CSprite(init_pos3, 0.5f, 0.5f, spriteAnim.GetFrame());
-	//fireSprite2 = new CSprite(init_pos4, 0.5f, 0.5f, spriteAnim2.GetFrame());
-
-	MainScene->AddObject(new CSprite(init_pos2, 1.5f*5, 1.0f*5, TEXTURE_2), SPRITE);
-	MainScene->AddObject(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1), SPRITE);
-	MainScene->AddObject(spriteAnim, SPRITE_ANIM);
-	//spriteRenderer.AddSprite(fireSprite);
-	//spriteRenderer.AddSprite(fireSprite2);
-
-	char fps[64] = "";
-	uint32 acc = 0;
-
-	/* Main Loop */
-	while (GameRunning){
-		GlobalTime = SDL_GetTicks();
-
-		//Time stuff
-		OldTime = CurrentTime;
-		CurrentTime = SDL_GetTicks();
-		dt = (CurrentTime - OldTime);
-
-		//update fps every 1000ms - PRIMITIVE!
-		acc += dt;
-		if (acc > 200)
-		{	
-			acc = 0;
-			if(startCfg.vSync)
-				sprintf(fps, "FPS %f \nVSYNC ON", (1000.0f / dt));
-			else
-				sprintf(fps, "FPS %f \nVSYNC OFF", (1000.0f / dt));
-			basicFont.prepareSentence(debugInfo, fps);
-		}
-
-		//Handle input
-		Update(dt);
-
-		//Draw 
-		Draw(dt);
-	}
-
-
-	return true;
-}
 
 void CGame::OnKeyDown(const SDL_Keycode *Key){
 	if (*Key == SDLK_ESCAPE){

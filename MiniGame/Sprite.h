@@ -26,6 +26,8 @@ public:
 	float32 GetHeight() const;
 	float32 GetAngleZ() const;
 	void SetAngleZ(float32 angle);
+	void SetWidth(float32 width);
+	void SetHeight(float32 height);
 
 private:
 	GLfloat width, height;
