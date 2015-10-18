@@ -16,6 +16,7 @@
 #include "GameObject.h"
 #include "Sprite.h"
 #include "TextureManager.h"
+#include "MapHandler.h"
 
 #include <iostream>
 #include <fstream>
@@ -65,6 +66,7 @@ private:
 	VSBasicRender shapeRender;
 	CCamera *Cam;
 	CScene *MainScene;
+	CMapHandler *Map1;
 
 	/* Mouse position on XY plane */
 	glm::vec2 mouse2DPosition;
@@ -95,7 +97,7 @@ private:
 	void NormalizeMousePos(uint32 screenWidth, uint32 screenHeight, uint32 inX, uint32 inY, float32 &outX, float32 &outY);
 	void ParseArgs(int argc, char* args[]);
 	void LoadConfig(const char* filename);
-	void LoadGameMap(const char* filename);
+	//void LoadGameMap(const char* filename);
 
 	void DrawAxes(void); 
 	

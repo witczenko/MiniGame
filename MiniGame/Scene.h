@@ -1,4 +1,7 @@
 #pragma once
+#ifndef SCENE_H
+#define SCENE_H
+
 #include <vector>
 #include "GameObject.h"
 #include "Types.h"
@@ -21,3 +24,4 @@ public:
 	~CScene();
 };
 
+#endif // SCENE_H

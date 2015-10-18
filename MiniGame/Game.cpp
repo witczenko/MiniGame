@@ -19,6 +19,8 @@ GameRunning(true),
 mouse2DPosition(0.0f, 0.0f),
 lockCam(false),
 MainScene(NULL),
+Map1(NULL),
+
 vsml(*VSMathLib::getInstance())
 {
 	log.addMessage("Start logging...");	
@@ -265,6 +267,7 @@ bool CGame::Run(){
 
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
 	MainScene = new CScene;
+	Map1 = new CMapHandler;
 
 	MainScene->Init();
 	textureMan.Init(); // <-- Here all textures are loaded
@@ -279,11 +282,14 @@ bool CGame::Run(){
 	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 1.0f);
 
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
-	spriteAnim->LoadAnimation("gfx/Opening/Opening__00", 7);
+	spriteAnim->LoadAnimation("gfx/Opening/Opening2__00",16);
 	spriteAnim->SetPos(init_pos3);
 	spriteAnim->SetFPS(24);
 	spriteAnim->SetHeight(0.4);
 	spriteAnim->SetWidth(0.4);
+
+	Map1->LoadTxtMap("maps/map1.txt");
+	//Map1->DisplayTiles();
 
 
 	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
@@ -502,9 +508,4 @@ void CGame::DrawAxes(void){
 	shapeRender.DrawLine(za, 2);
 
 	vsml.popMatrix(VSMathLib::MODEL);
-}
-
-
-void CGame::LoadGameMap(const char* filename){
-
 }

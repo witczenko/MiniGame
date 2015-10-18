@@ -57,6 +57,7 @@ void CScene::cleanUp(){
 										delete s;
 									}
 									ObjectCollection[GameObject::SPRITE].clear();
+									break;
 		}
 		case GameObject::SPRITE_ANIM:{
 										 for (auto spriteAnim : ObjectCollection[GameObject::SPRITE]){
@@ -64,6 +65,7 @@ void CScene::cleanUp(){
 											 delete sa;
 										 }
 										 ObjectCollection[GameObject::SPRITE].clear();
+										 break;
 		}
 
 
