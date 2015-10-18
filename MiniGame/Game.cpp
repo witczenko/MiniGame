@@ -289,11 +289,12 @@ bool CGame::Run(){
 	spriteAnim->SetWidth(0.4);
 
 	Map1->LoadTxtMap("maps/map1.txt");
+	Map1->AddToScene(MainScene, &textureMan);
 	//Map1->DisplayTiles();
 
 
 	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
-	MainScene->AddObject(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1), GameObject::SPRITE);
+	//MainScene->AddObject(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1), GameObject::SPRITE);
 	MainScene->AddObject(spriteAnim, GameObject::SPRITE_ANIM);
 
 	char fps[64] = "";

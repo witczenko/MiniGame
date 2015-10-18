@@ -10,6 +10,8 @@
 
 #include "Types.h"
 #include "Sprite.h"
+#include "Scene.h"
+#include "TextureManager.h"
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -21,21 +23,28 @@
 
 */
 
-class CTile
+class CTile : public CSprite
 {
-	uint32 id;
-	char type;
-	glm::vec3 pos;
-	uint32 row;
-	uint32 col;
-
 public:
+	enum TILE_TYPE{
+		NONE = 0,
+		GRASS,
+		ICE,
+		WATER,
+		FIRE
+	};
+
 	CTile();
 	//CTile(CTile* kafel);
-	CTile(char type, uint32 row, uint32 col);
-	char getType();
+	CTile(TILE_TYPE type, uint32 row, uint32 col);
+	TILE_TYPE getType();
 	uint32 getRow();
 	~CTile();
+private:
+	uint32 id;
+	TILE_TYPE type;
+	uint32 row;
+	uint32 col;
 };
 
 
@@ -52,6 +61,7 @@ public:
 	~CMapHandler();
 
 	void LoadTxtMap( const char* filename);
+	void AddToScene(CScene* scene, CTextureManager* texutreMan);
 	//void AddTile();
 	void DisplayTiles();
 };

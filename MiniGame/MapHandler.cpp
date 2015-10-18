@@ -1,33 +1,34 @@
 #include "MapHandler.h"
 //#include <fstream>
 
-static const uint8 TILE_W = 32;
-static const uint8 TILE_H = 32;
+static const float32 TILE_W = 0.5f;
+static const float32 TILE_H = 0.5f;
 
 static uint32 TILE_COUNT = 0;
 
-CTile::CTile()
+CTile::CTile() 
 {
 	id = TILE_COUNT;
 	TILE_COUNT++;
 	row = 0;
 	col = 0;
-	type = '0';
-	glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	type = NONE;
 }
 
-CTile::CTile(char type, uint32 row, uint32 col )
+CTile::CTile(TILE_TYPE type, uint32 row, uint32 col)
 {
 	id = TILE_COUNT;
 	TILE_COUNT++;
 	this->type = type;
 	this->row = row;
 	this->col = col;
-	glm::vec3 pos = glm::vec3( (TILE_W*col), (TILE_H*row), 0.0f );
+	this->SetPos(glm::vec3( (TILE_W*col)*2.0f, -(TILE_H*row)*2.0f, 0.0f ));
+	this->SetWidth(TILE_W);
+	this->SetHeight(TILE_H);
 
 }
 
-char CTile::getType()
+CTile::TILE_TYPE CTile::getType()
 {
 	return type;
 }
@@ -105,11 +106,29 @@ void CMapHandler::LoadTxtMap( const char* filename )
 				{
 					break;
 				}
-				default:
+				case '1':
 				{
-					tile_map.push_back(new CTile(k, row, col));
+					tile_map.push_back(new CTile(CTile::GRASS, row, col));
 					col++;
 					break;
+				}
+				case '2':
+				{
+							tile_map.push_back(new CTile(CTile::ICE, row, col));
+							col++;
+							break;
+				}
+				case '3':
+				{
+							tile_map.push_back(new CTile(CTile::WATER, row, col));
+							col++;
+							break;
+				}
+				case '4':
+				{
+							tile_map.push_back(new CTile(CTile::FIRE, row, col));
+							col++;
+							break;
 				}
 			}
 			
@@ -139,3 +158,20 @@ void CMapHandler::DisplayTiles()
 }
 
 
+void CMapHandler::AddToScene(CScene* scene, CTextureManager* texutreMan){
+	for (auto tile : tile_map){
+		switch (tile->getType())
+		{
+		case CTile::GRASS: tile->AssingTexture(texutreMan->GetTexture("gfx/box.png"));
+			break;
+		case CTile::ICE: tile->AssingTexture(texutreMan->GetTexture("gfx/no_texture.png"));
+			break;
+		case CTile::FIRE: tile->AssingTexture(texutreMan->GetTexture("gfx/cursor.png"));
+			break;
+		default:
+			break;
+		}
+
+		scene->AddObject(tile, GameObject::TILE);
+	}
+}

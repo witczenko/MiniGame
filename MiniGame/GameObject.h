@@ -15,6 +15,7 @@ public:
 		PLAYER,
 		SPRITE,
 		SPRITE_ANIM,
+		TILE,
 		TYPE_COUNT,
 	};
 

@@ -29,6 +29,11 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 						 CSprite *s = (CSprite*)obj;
 						 SpriteRenderer.AddSprite(s);
 	}
+	case GameObject::TILE:{
+									 CSprite *s = (CSprite*)obj;
+									 SpriteRenderer.AddSprite(s);
+	}
+
 	}
 }
 
