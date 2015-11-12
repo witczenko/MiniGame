@@ -20,6 +20,7 @@ mouse2DPosition(0.0f, 0.0f),
 lockCam(false),
 MainScene(NULL),
 Map1(NULL),
+Player1(NULL),
 
 vsml(*VSMathLib::getInstance())
 {
@@ -39,6 +40,8 @@ CGame::~CGame()
 {
 	log.dumpToFile("GAME_LOG.txt");
 	delete Cam;
+	delete Map1;
+	delete Player1;
 	delete MainScene;
 
 	SDL_GL_DeleteContext(MainGlContext);
@@ -268,12 +271,14 @@ bool CGame::Run(){
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
 	MainScene = new CScene;
 	Map1 = new CMapHandler;
+	Player1 = new CPlayer;
 
 	MainScene->Init();
 	textureMan.Init(); // <-- Here all textures are loaded
 
 	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
+	uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
 
 
 	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -281,12 +286,12 @@ bool CGame::Run(){
 	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, 1.0f);
 	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 1.0f);
 
-	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
+	/*CSpriteAnimation *spriteAnim = new CSpriteAnimation();
 	spriteAnim->LoadAnimation("gfx/Opening/Opening2__00",16);
 	spriteAnim->SetPos(init_pos3);
 	spriteAnim->SetFPS(24);
 	spriteAnim->SetHeight(0.4);
-	spriteAnim->SetWidth(0.4);
+	spriteAnim->SetWidth(0.4);*/
 
 	Map1->LoadTxtMap("maps/map1.txt");
 	Map1->AddToScene(MainScene, &textureMan);
@@ -294,8 +299,8 @@ bool CGame::Run(){
 
 
 	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
-	//MainScene->AddObject(new CSprite(init_pos1, 1.0f, 1.0f, TEXTURE_1), GameObject::SPRITE);
-	MainScene->AddObject(spriteAnim, GameObject::SPRITE_ANIM);
+	MainScene->AddObject(new CSprite(init_pos4, 0.5f, 0.5f, TEXTURE_3), GameObject::PLAYER);
+	//MainScene->AddObject(spriteAnim, GameObject::SPRITE_ANIM);
 
 	char fps[64] = "";
 	uint32 acc = 0;
@@ -409,6 +414,7 @@ void CGame::OnKeyDown(const SDL_Keycode *Key){
 	else if (*Key == SDLK_v){
 		//modelRot.p -= 10.0f;
 	}
+	
 }
 
 void CGame::OnWindowExit(){

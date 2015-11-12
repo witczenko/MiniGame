@@ -14,7 +14,7 @@
 #include <iostream>
 
 /**
- * A enum to represent mouse buttons 
+ * An enum to represent mouse buttons 
 */
 enum MouseButton{
 	MRight, /**< Right button */
@@ -45,7 +45,7 @@ public:
 	~CInputManager();
 
 	void AddListener(CInputInterface* pListener);
-	void RemoveListener(CInputInterface* pListenre);
+	void RemoveListener(CInputInterface* pListener);
 	void Update(uint32 dt);
 
 	

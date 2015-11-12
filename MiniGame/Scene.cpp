@@ -23,17 +23,24 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 
 	switch (type){
 	case GameObject::SPRITE:{
-					SpriteRenderer.AddSprite((CSprite*)obj);
+						SpriteRenderer.AddSprite((CSprite*)obj);
+						break;
 	}
 	case GameObject::SPRITE_ANIM:{
-						 CSprite *s = (CSprite*)obj;
-						 SpriteRenderer.AddSprite(s);
+						CSprite *s = (CSprite*)obj;
+						SpriteRenderer.AddSprite(s);
+						break;
 	}
 	case GameObject::TILE:{
-									 CSprite *s = (CSprite*)obj;
-									 SpriteRenderer.AddSprite(s);
+						CSprite *s = (CSprite*)obj;
+						SpriteRenderer.AddSprite(s);
+						break;
 	}
-
+	case GameObject::PLAYER:{
+						CSprite *s = (CSprite*)obj;
+						SpriteRenderer.AddSprite(s);
+						break;
+	}
 	}
 }
 
@@ -71,6 +78,14 @@ void CScene::cleanUp(){
 										 }
 										 ObjectCollection[GameObject::SPRITE].clear();
 										 break;
+		}
+		case GameObject::PLAYER:{
+									for (auto player : ObjectCollection[GameObject::PLAYER]){
+										CSpriteAnimation *pl = (CSpriteAnimation*)player;
+										delete pl;
+									}
+									ObjectCollection[GameObject::PLAYER].clear();
+									break;
 		}
 
 

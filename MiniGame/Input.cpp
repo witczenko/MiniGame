@@ -40,7 +40,7 @@ void CInputManager::Update(uint32 dt){
 							 //Do stuff with listeners 
 							 for (uint32 i = 0; i < m_Listeners.size(); ++i)
 								 m_Listeners[i]->OnKeyDown(&Key);
-
+							 
 							 
 		}
 		break;

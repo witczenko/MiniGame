@@ -102,6 +102,7 @@ void CSpriteRenderer::Init()
 
 void CSpriteRenderer::Render()
 {
+	static uint32 prev_tex;
 	glBindVertexArray(VAO);
 	// Bind texure, send matrices to GL...
 	for (auto sprite : spriteCollection)
@@ -114,8 +115,13 @@ void CSpriteRenderer::Render()
 		vsml.matricesToGL();
 		vsml.popMatrix(VSMathLib::MODEL);
 
-		glBindTexture(GL_TEXTURE_2D, sprite->GetTextureId());
+		
+
+		if (prev_tex != sprite->GetTextureId()){
+			glBindTexture(GL_TEXTURE_2D, sprite->GetTextureId());
+		}
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+		prev_tex = sprite->GetTextureId();
 	}
 
 	glBindVertexArray(0);

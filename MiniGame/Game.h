@@ -17,6 +17,7 @@
 #include "Sprite.h"
 #include "TextureManager.h"
 #include "MapHandler.h"
+#include "Player.h"
 
 #include <iostream>
 #include <fstream>
@@ -67,6 +68,8 @@ private:
 	CCamera *Cam;
 	CScene *MainScene;
 	CMapHandler *Map1;
+	CPlayer *Player1;
+	
 
 	/* Mouse position on XY plane */
 	glm::vec2 mouse2DPosition;
