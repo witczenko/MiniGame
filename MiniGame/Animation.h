@@ -1,5 +1,5 @@
 #ifndef ANIMATION_H
-#define ANIMATION
+#define ANIMATION_H
 #include "Sprite.h"
 
 /* Sprite animation */

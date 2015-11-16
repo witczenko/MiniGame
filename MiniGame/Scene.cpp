@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include <glm\glm.hpp>
 #include "Animation.h"
+#include "Player.h"
 
 glm::vec3 AnimInitPos(0.0f, 0.0f, 0.0f);
 
@@ -37,8 +38,9 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 						break;
 	}
 	case GameObject::PLAYER:{
-						CSprite *s = (CSprite*)obj;
-						SpriteRenderer.AddSprite(s);
+						CPlayer *s = (CPlayer*)obj;
+						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
 	}
 	}
@@ -52,9 +54,10 @@ void CScene::Draw(){
 
 
 void CScene::Update(uint32 dt){
-	for (auto spriteAnim : ObjectCollection[GameObject::SPRITE_ANIM]){
-		CSpriteAnimation *sa = (CSpriteAnimation*)spriteAnim;
-		sa->Update(dt);
+	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){
+		for (auto obj : ObjectCollection[i]){
+			obj->Update(dt);
+		}
 	}
 }
 
@@ -80,11 +83,14 @@ void CScene::cleanUp(){
 										 break;
 		}
 		case GameObject::PLAYER:{
+									//TODO Delete player
+									/* 
 									for (auto player : ObjectCollection[GameObject::PLAYER]){
 										CSpriteAnimation *pl = (CSpriteAnimation*)player;
 										delete pl;
 									}
 									ObjectCollection[GameObject::PLAYER].clear();
+									*/
 									break;
 		}
 

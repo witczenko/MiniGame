@@ -1,10 +1,9 @@
-#pragma once
 #ifndef PLAYER_H
 #define PLAYER_H
 
 #include "Types.h"
 #include "GameObject.h"
-//#include "Animation.h"
+#include "Animation.h"
 
 
 
@@ -31,24 +30,31 @@ class CPlayer : public GameObject //, public CSpriteAnimation ??? player animati
 		uint32 duration;
 	};
 
+<<<<<<< HEAD
+=======
+class CPlayer : public GameObject //, public CSpriteAnimation ??? player animation ???
+{
+public:
+>>>>>>> origin/master
 	uint16 health;
 	float32 velocity;
 	// face angle variable ??
 	uint16 ammunition;
-	Effect status[EFFECT_COUNT];
-	
+	CSpriteAnimation *sprite_anim;
 
-public:
+	Effect status[EFFECT_COUNT];
+
 	CPlayer();
 	~CPlayer();
 
 protected:
 	void OnKeyDown(const SDL_Keycode *Key);
+	void Update(uint32 dt);
 	void OnMouseMove(const MouseArgs *Args);
-	void OnMouseButtonDown(const MouseArgs *Args);
-	void OnMouseButtonUp(const MouseArgs *Args);
-	void OnMouseWheelBackward();
-	void OnMouseWheelForward();
+	//void OnMouseButtonDown(const MouseArgs *Args);
+	//void OnMouseButtonUp(const MouseArgs *Args);
+	//void OnMouseWheelBackward();
+	//void OnMouseWheelForward();
 
 };
 

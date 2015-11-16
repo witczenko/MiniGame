@@ -6,17 +6,18 @@
 #define AXES_LENGTH (10e5)
 
 CTextureManager textureMan;
+CSpriteAnimation *dupa;
 
 float red[4] = { 1.0, 0.0, 0.0, 1.0 };
 float green[4] = { 0.0, 1.0, 0.0, 1.0 };
 float blue[4] = { 0.0, 0.0, 1.0, 1.0 };
 
-CGame::CGame(int argc, char* args[]) :
+CGame::CGame() :
 Win(0),
 MainGlContext(NULL),
 GlobalTime(0),
 GameRunning(true),
-mouse2DPosition(0.0f, 0.0f),
+mouse2dWorldPosition(0.0f, 0.0f),
 lockCam(false),
 MainScene(NULL),
 Map1(NULL),
@@ -32,7 +33,7 @@ vsml(*VSMathLib::getInstance())
 	startCfg.vSync = true;
 
 	LoadConfig("config.xml");
-	ParseArgs(argc, args);
+	//ParseArgs(argc, args);
 }
 
 
@@ -272,7 +273,7 @@ bool CGame::Run(){
 	MainScene = new CScene;
 	Map1 = new CMapHandler;
 	Player1 = new CPlayer;
-
+	
 	MainScene->Init();
 	textureMan.Init(); // <-- Here all textures are loaded
 
@@ -280,26 +281,39 @@ bool CGame::Run(){
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
 	uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
 
-
 	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, -0.1f);
 	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 1.0f);
 
-	/*CSpriteAnimation *spriteAnim = new CSpriteAnimation();
-	spriteAnim->LoadAnimation("gfx/Opening/Opening2__00",16);
-	spriteAnim->SetPos(init_pos3);
+	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
+
+	Player1->SetPos(init_pos1);
+	bool loaded = spriteAnim->LoadAnimation("gfx/Opening/Opening__00",7);
+	spriteAnim->SetPos(init_pos1);
 	spriteAnim->SetFPS(24);
 	spriteAnim->SetHeight(0.4);
-	spriteAnim->SetWidth(0.4);*/
+	spriteAnim->SetWidth(0.4);
 
-	Map1->LoadTxtMap("maps/map1.txt");
-	Map1->AddToScene(MainScene, &textureMan);
+	dupa = new CSpriteAnimation();
+	dupa->LoadAnimation("gfx/Opening/Opening__00", 7);
+	dupa->SetPos(init_pos3);
+	dupa->SetFPS(24);
+	dupa->SetHeight(0.4);
+	dupa->SetWidth(0.4);
+
+
+	Player1->sprite_anim = spriteAnim;
+
+	//Map1->LoadTxtMap("maps/map1.txt");
+	//Map1->AddToScene(MainScene, &textureMan);
 	//Map1->DisplayTiles();
 
-
 	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
-	MainScene->AddObject(new CSprite(init_pos4, 0.5f, 0.5f, TEXTURE_3), GameObject::PLAYER);
+	MainScene->AddObject(dupa, GameObject::SPRITE_ANIM);
+	MainScene->AddObject(Player1, GameObject::PLAYER);
+	
+
 	//MainScene->AddObject(spriteAnim, GameObject::SPRITE_ANIM);
 
 	char fps[64] = "";
@@ -484,20 +498,16 @@ void CGame::OnMouseWheelForward(){
 
 void CGame::CalculateMousePos(const MouseArgs *Args){
 	/* normalize mouse position  */
-	NormalizeMousePos(WIDTH, HEIGHT, Args->x, Args->y, normalizedMousePos.x, normalizedMousePos.y);
+	mouse_x = Args->x;
+	mouse_y = Args->y;
+	GameUtils::NormalizeMousePos(startCfg.winWidth, startCfg.winHeight, Args->x, Args->y, normalizedMousePos.x, normalizedMousePos.y);
 	glm::vec3 camPos = glm::vec3(Cam->GetPosition().x, Cam->GetPosition().y, Cam->GetPosition().z);
 	rayDir = GameUtils::CalcCamRay(normalizedMousePos, Cam->GetProjection(), Cam->GetView());
 
-	/* mouse cursor coordinates on XY plane */
-	mouse2DPosition.x = (rayDir.x * ((-camPos.z) / rayDir.z)) + camPos.x;
-	mouse2DPosition.y = (rayDir.y * ((-camPos.z) / rayDir.z)) + camPos.y;
+	/* mouse cursor coordinates on XY plane  (z==0.0f) */
+	mouse2dWorldPosition.x = (rayDir.x * ((-camPos.z) / rayDir.z)) + camPos.x;
+	mouse2dWorldPosition.y = (rayDir.y * ((-camPos.z) / rayDir.z)) + camPos.y;
 };
-
-void CGame::NormalizeMousePos(uint32 screenWidth, uint32 screenHeight, uint32 inX, uint32 inY, float32 &outX, float32 &outY){
-	outX = ((2.0f * inX) / (float)(screenWidth)) - 1.0f;
-	outY = 1.0f - ((2.0f * inY) / (float)screenHeight);
-}
-
 
 void CGame::DrawAxes(void){
 	//render Axis 
@@ -515,4 +525,29 @@ void CGame::DrawAxes(void){
 	shapeRender.DrawLine(za, 2);
 
 	vsml.popMatrix(VSMathLib::MODEL);
+}
+
+
+CCamera *CGame::GetCamera(){
+	return this->Cam;
+}
+
+void CGame::GetWindowSize(uint32 &width, uint32 &height){
+	width = this->startCfg.winWidth;
+	height = this->startCfg.winHeight;
+}
+
+void CGame::GetMousePos(uint32 &x, uint32 &y){
+	x = this->mouse_x;
+	y = this->mouse_y;
+}
+
+void CGame::GetNormalizedMousePos(float &x, float &y){
+	x = this->normalizedMousePos.x;
+	y = this->normalizedMousePos.y;
+}
+
+void CGame::GetMouse2dWorldPositon(float &x, float &y){
+	x = this->mouse2dWorldPosition.x;
+	y = this->mouse2dWorldPosition.y;
 }

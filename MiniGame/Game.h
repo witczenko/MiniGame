@@ -53,42 +53,44 @@ struct StartCfg{
 	int vSync;
 };
 
-
 class CGame : CInputInterface {
 private:	
+	StartCfg startCfg; 
 	VSLogLib log;
 	VSMathLib & vsml;
+	SDL_Window* Win;
+	SDL_GLContext MainGlContext;
+	//Fonts
 	VSShaderLib basicShader, lineShader;
 	VSFontLib basicFont;
 	unsigned int aSentence, debugInfo;
 
-	glm::vec3 rayDir;
+	/* ---- Mouse ----*/
+	glm::vec3 rayDir; // <-- camera-mouse direction
+
+	/* Mouse position on XY plane */
+	glm::vec2 mouse2dWorldPosition; // <-- mouse positon on X-Y plane (z = 0.0f) 
+	glm::vec2 normalizedMousePos; // <-- normalized mouse position value beetween [-1,1]
+	uint32 mouse_x; 
+	uint32 mouse_y; 
 
 	VSBasicRender shapeRender;
 	CCamera *Cam;
 	CScene *MainScene;
 	CMapHandler *Map1;
 	CPlayer *Player1;
-	
-
-	/* Mouse position on XY plane */
-	glm::vec2 mouse2DPosition;
-	glm::vec2 normalizedMousePos;
-
 	bool lockCam;
-
-	StartCfg startCfg;
-	SDL_Window* Win;
-	SDL_GLContext MainGlContext;
-	uint32 GlobalTime;
 
 	//SDL events
 	SDL_Event event;
 
-	//Delta Time
-	uint32 dt;
+	/* ---- TIME ---*/
+	uint32 dt; 
+	uint32 GlobalTime;
 	bool GameRunning;
 
+	/*  --- FUNCTIONS --- */
+	CGame();
 
 	bool Init();
 	void InitVS();
@@ -96,12 +98,9 @@ private:
 
 	void Update(uint32 dt);
 	void Draw(uint32 dt);
-	void CalculateMousePos(const MouseArgs *Args);
-	void NormalizeMousePos(uint32 screenWidth, uint32 screenHeight, uint32 inX, uint32 inY, float32 &outX, float32 &outY);
+	void CalculateMousePos(const MouseArgs *Args);	
 	void ParseArgs(int argc, char* args[]);
 	void LoadConfig(const char* filename);
-	//void LoadGameMap(const char* filename);
-
 	void DrawAxes(void); 
 	
 protected:
@@ -113,10 +112,22 @@ protected:
 	void OnMouseWheelForward();
 	void OnWindowExit();
 
-public:
-	CGame(int argc, char* args[]);
+public:	
 	bool Run();
 	virtual ~CGame();
+	
+	CCamera *GetCamera();
+	void GetWindowSize(uint32 &width, uint32 &height);
+
+	/* TODO */
+	void GetMousePos(uint32 &x, uint32 &y);
+	void GetNormalizedMousePos(float &x, float &y);
+	void GetMouse2dWorldPositon(float &x, float &y);
+
+	static CGame & GetGameIntance(){
+		static CGame Game;
+		return Game;
+	}
 };
 
 #endif // CGAME_H

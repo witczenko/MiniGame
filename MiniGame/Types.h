@@ -13,12 +13,6 @@ typedef unsigned long long int uint64;
 typedef float float32;
 typedef double float64;
 
-
-/* math stuff */
-#define D2R(x) x*(3.141592f/180.0f)
-#define R2D(x) x*57.2957795f
-
-
 /* -- */
 struct Rect{
 	float32 x;

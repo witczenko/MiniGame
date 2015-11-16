@@ -66,3 +66,8 @@ glm::vec3 GameUtils::ScaleToUnit(glm::vec3 inVec){
 
 	return (inVec / max);
 }
+
+void GameUtils::NormalizeMousePos(uint32 screenWidth, uint32 screenHeight, uint32 inX, uint32 inY, float32 &outX, float32 &outY){
+	outX = ((2.0f * inX) / (float)(screenWidth)) - 1.0f;
+	outY = 1.0f - ((2.0f * inY) / (float)screenHeight);
+}
