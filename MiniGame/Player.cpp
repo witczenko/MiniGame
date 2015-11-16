@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "GameObject.h"
+#include "Types.h"
 
 
 CPlayer::CPlayer()
@@ -7,6 +8,13 @@ CPlayer::CPlayer()
 	health = 100; // default health value
 	velocity = 0.2f; // default velocity
 	ammunition = 100; // default ammo amount
+
+	for (int i = UNDEFINED; i < EFFECT_COUNT; i++) // default status array values
+	{
+		status[i].type = static_cast<EFFECT_TYPE>(i);
+		status[i].active = false;
+		status[i].duration = 0;
+	}
 	
 }
 
