@@ -48,11 +48,10 @@ public:
 	void RemoveListener(CInputInterface* pListener);
 	void Update(uint32 dt);
 
-	
-
 	//Global Instance, should be a singleton? 
 	static CInputManager & GetInputManager(){
-		static CInputManager GameInputManager; return GameInputManager;
+		static CInputManager GameInputManager; 
+		return GameInputManager;
 	}
 
 private:

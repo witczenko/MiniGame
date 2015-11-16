@@ -7,7 +7,7 @@
 
 
 
-class GameObject : public CInputManager
+class GameObject : public CInputInterface
 {
 public:
 	enum OBJECT_TYPE{
@@ -26,6 +26,8 @@ public:
 	glm::vec3 GetPos() const;
 	void SetPos(glm::vec3 pos);
 	uint32 GetID() const;
+
+	virtual void Update(uint32 dt){};
 
 private:
 	uint32 ID;
