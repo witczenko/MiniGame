@@ -295,12 +295,12 @@ bool CGame::Run(){
 	spriteAnim->SetHeight(0.4);
 	spriteAnim->SetWidth(0.4);
 
-	dupa = new CSpriteAnimation();
+	/*dupa = new CSpriteAnimation();
 	dupa->LoadAnimation("gfx/Opening/Opening__00", 7);
 	dupa->SetPos(init_pos3);
 	dupa->SetFPS(24);
 	dupa->SetHeight(0.4);
-	dupa->SetWidth(0.4);
+	dupa->SetWidth(0.4);*/
 
 
 	Player1->sprite_anim = spriteAnim;
@@ -310,7 +310,7 @@ bool CGame::Run(){
 	//Map1->DisplayTiles();
 
 	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
-	MainScene->AddObject(dupa, GameObject::SPRITE_ANIM);
+	//->AddObject(dupa, GameObject::SPRITE_ANIM);
 	MainScene->AddObject(Player1, GameObject::PLAYER);
 	
 
