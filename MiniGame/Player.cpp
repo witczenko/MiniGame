@@ -10,10 +10,11 @@
 #include <glm/gtx/vector_angle.hpp>
 #include "Game.h"
 
-CPlayer::CPlayer()
+CPlayer::CPlayer():
+InputState(0)
 {
-	health = 100; // default health value
-	velocity = 0.05f; // default velocity
+	health = HEALTH; // default health value
+	velocity = 3.0f; // default velocity
 	
 	for (int i = UNDEFINED; i < EFFECT_COUNT; i++) // default status array values
 	{
@@ -39,29 +40,38 @@ CPlayer::~CPlayer()
 
 void CPlayer::OnKeyDown(const SDL_Keycode *Key)
 {
+
 	if (*Key == SDLK_w){
-		glm::vec3 move = GameObject::GetPos();
-		move.y += velocity;
-		GameObject::SetPos(move);
+		InputState |= STATE_TYPE::UP;
 	}
 	else
-	if (*Key == SDLK_s) {
-		glm::vec3 move = GameObject::GetPos();	
-		move.y -= velocity;
-		GameObject::SetPos(move);
+	if (*Key == SDLK_s) {	
+		InputState |= STATE_TYPE::DOWN;
 	}
 	else
-	if (*Key == SDLK_a) {
-		glm::vec3 move = GameObject::GetPos();
-		move.x -= velocity;
-		GameObject::SetPos(move);
+	if (*Key == SDLK_a) {	
+		InputState |= STATE_TYPE::LEFT;
 	}
 	else
-	if (*Key == SDLK_d) {
-		glm::vec3 move = GameObject::GetPos();
-		move.x += velocity;
-		GameObject::SetPos(move);
+	if (*Key == SDLK_d) {	
+		InputState |= STATE_TYPE::RIGHT;
 	}
+}
+
+void CPlayer::OnKeyUp(const SDL_Keycode *Key){
+	if (*Key == SDLK_w){
+		InputState &= ~STATE_TYPE::UP;
+	}
+	if (*Key == SDLK_s){
+		InputState &= ~STATE_TYPE::DOWN;
+	}
+	if (*Key == SDLK_a){
+		InputState &= ~STATE_TYPE::LEFT;
+	}
+	if (*Key == SDLK_d){
+		InputState &= ~STATE_TYPE::RIGHT;
+	}
+
 }
 
 void CPlayer::OnMouseMove(const MouseArgs *Args){
@@ -78,6 +88,9 @@ void CPlayer::OnMouseMove(const MouseArgs *Args){
 
 void CPlayer::WeaponStatusUpdate(uint32 dt)
 {
+	
+	std::cout << "\nHeat: " << primary.heat_level;
+	std::cout << "\nAmmo: " << secondary.ammunition;
 	if (primary.heat_level == HEAT_LIMIT)
 	{
 		primary.overheated = true;
@@ -85,12 +98,12 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 
 	if (primary.heat_level > 0)
 	{
-		if (primary.heat_level < dt)
+		if (primary.heat_level < (dt / 1000.0f))
 		{
 			primary.heat_level = 0;
 			primary.overheated = false;
 		}
-		else primary.heat_level -= dt;
+		else primary.heat_level -= (dt / 1000.0f);
 	}
 
 
@@ -103,15 +116,31 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 		}
 		else secondary.reload_time -= dt;
 	}
-
-	
-
-
 }
 
 void CPlayer::Update(uint32 dt){
+	float time = dt / 1000.f;
+	glm::vec3 move = GameObject::GetPos();
+
 	sprite_anim->SetPos(this->GetPos());
 	WeaponStatusUpdate(dt);
+
+	if (InputState & STATE_TYPE::UP){
+		move.y += velocity*time;
+	}
+
+	if (InputState & STATE_TYPE::DOWN)
+		move.y -= velocity*time;
+
+	if (InputState & STATE_TYPE::LEFT)
+		move.x -= velocity*time;
+
+	if (InputState & STATE_TYPE::RIGHT){
+		move.x += velocity*time;
+	}
+
+	GameObject::SetPos(move);
+
 }
 
 
@@ -120,6 +149,7 @@ void CPlayer::Update(uint32 dt){
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
+	std::cout << "Mouse click\n";
 	switch (Args->button)
 	{
 	case MLeft:

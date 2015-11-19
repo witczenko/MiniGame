@@ -55,6 +55,7 @@ public:
 	}
 
 private:
+	bool mouse_pressed;
 	bool GameExit;
 	SDL_Event event;
 	MouseArgs Args;
@@ -86,6 +87,7 @@ public:
 	virtual void OnMouseButtonDown(const MouseArgs *Args){};
 
 	virtual void OnMouseButtonUp(const MouseArgs *Args){};
+	//virtual void OnMouseButtonPressed(const MouseArgs *Args){};
 	
 	/**
 	*	\brief TODO

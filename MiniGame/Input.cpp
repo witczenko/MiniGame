@@ -45,6 +45,16 @@ void CInputManager::Update(uint32 dt){
 		}
 		break;
 
+		case SDL_KEYUP:{
+							 Key = event.key.keysym.sym;
+							 //Do stuff with listeners 
+							 for (uint32 i = 0; i < m_Listeners.size(); ++i)
+								 m_Listeners[i]->OnKeyUp(&Key);
+
+
+		}
+		break;
+
 		case SDL_MOUSEMOTION:{
 								 Args.dx = Args.x - event.motion.x;
 								 Args.dy = Args.y - event.motion.y;
@@ -60,7 +70,7 @@ void CInputManager::Update(uint32 dt){
 
 		case SDL_MOUSEBUTTONDOWN:{ 
 									 if (event.button.button == SDL_BUTTON_LEFT) Args.button = MLeft; 
-									 if (event.button.button == SDL_BUTTON_RIGHT) Args.button = MRight; 
+									 if (event.button.button == SDL_BUTTON_RIGHT) Args.button = MRight;  
 									 
 									 //Do stuff with listeners 
 									 for (uint32 i = 0; i < m_Listeners.size(); ++i)

@@ -289,9 +289,9 @@ bool CGame::Run(){
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
 
 	Player1->SetPos(init_pos1);
-	bool loaded = spriteAnim->LoadAnimation("gfx/Opening/Opening__00",7);
+	bool loaded = spriteAnim->LoadAnimation("gfx/Firing/Firing2__00",16);
 	spriteAnim->SetPos(init_pos1);
-	spriteAnim->SetFPS(24);
+	spriteAnim->SetFPS(90);
 	spriteAnim->SetHeight(0.4);
 	spriteAnim->SetWidth(0.4);
 
@@ -353,6 +353,7 @@ bool CGame::Run(){
 				SDL_Delay(delay);
 		}
 		*/
+		//SDL_Delay(1);
 	}
 
 
