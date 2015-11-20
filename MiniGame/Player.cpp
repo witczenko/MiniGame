@@ -13,8 +13,8 @@
 CPlayer::CPlayer():
 InputState(0)
 {
-	health = HEALTH; // default health value
-	velocity = 3.0f; // default velocity
+	health = PLAYER_HEALTH; // default health value
+	velocity = PLAYER_VELOCITY; // default velocity
 	
 	for (int i = UNDEFINED; i < EFFECT_COUNT; i++) // default status array values
 	{
@@ -27,7 +27,7 @@ InputState(0)
 	primary.heat_level = 0;
 	primary.overheated = false;
 
-	secondary.ammunition = AMMUNITION;
+	secondary.ammunition = PLAYER_AMMUNITION;
 	secondary.ready = true;
 	secondary.reload_time = 0;
 }
@@ -81,7 +81,7 @@ void CPlayer::RotateToMouse(){
 	obj_pos.y = this->GetPos().y;
 	mouse_vec = glm::normalize(mouse_vec - obj_pos);
 	float angle = glm::orientedAngle(ref_vec, mouse_vec);
-	sprite_anim->SetAngleZ(angle);
+	sprite_anim->SetAngleZ(angle-90.0f);
 }
 
 void CPlayer::OnMouseMove(const MouseArgs *Args){
@@ -111,9 +111,8 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 		if (!primary.overheated)
 		{
 			// shoot
-			// remember to call 
 			primary.heat_level += dt;
-			if (primary.heat_level >= HEAT_LIMIT)
+			if (primary.heat_level >= PLAYER_HEAT_LIMIT)
 			{
 				primary.overheated = true;
 			}
@@ -127,7 +126,7 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 			//shoot
 			secondary.ready = false;
 			secondary.ammunition--;
-			secondary.reload_time = RELOAD_DELAY;
+			secondary.reload_time = PLAYER_RELOAD_DELAY;
 		}
 	}
 
@@ -176,7 +175,6 @@ void CPlayer::Update(uint32 dt){
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
-	//std::cout << "Mouse click\n";
 	switch (Args->button)
 	{
 	case MLeft:

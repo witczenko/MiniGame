@@ -33,4 +33,8 @@ void GameObject::SetPos(glm::vec3 pos){
 	this->pos = pos;
 }
 
+void GameObject::SetPos(glm::vec2 pos){
+	this->pos.x = pos.x;
+	this->pos.y = pos.y;
+}
 

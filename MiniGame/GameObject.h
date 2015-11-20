@@ -16,6 +16,7 @@ public:
 		SPRITE,
 		SPRITE_ANIM,
 		TILE,
+		MOB,
 		TYPE_COUNT,
 	};
 
@@ -25,6 +26,7 @@ public:
 
 	glm::vec3 GetPos() const;
 	void SetPos(glm::vec3 pos);
+	void SetPos(glm::vec2 pos);
 	uint32 GetID() const;
 
 	virtual void Update(uint32 dt){};
