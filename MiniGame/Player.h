@@ -84,7 +84,7 @@ protected:
 	void OnMouseButtonDown(const MouseArgs *Args);
 	void OnKeyUp(const SDL_Keycode *Key);
 	void OnMouseButtonUp(const MouseArgs *Args);
-	void OnCollison(GameObject* obj);
+	void OnCollision(GameObject* obj);
 	//void OnMouseWheelForward();
 };
 

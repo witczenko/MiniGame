@@ -11,17 +11,14 @@
 #include "Game.h"
 
 CPlayer::CPlayer():
-InputState(0)
+InputState(0),
+sprite_anim(NULL)
 {
-<<<<<<< HEAD
 	type = OBJECT_TYPE::PLAYER;
-
-	health = HEALTH; // default health value
+	health = PLAYER_HEALTH; // default health value
 	velocity = 3.0f; // default velocity
-=======
 	health = PLAYER_HEALTH; // default health value
 	velocity = PLAYER_VELOCITY; // default velocity
->>>>>>> origin/master
 	
 	for (int i = UNDEFINED; i < EFFECT_COUNT; i++) // default status array values
 	{
@@ -29,7 +26,6 @@ InputState(0)
 		status[i].active = false;
 		status[i].duration = 0;
 	}
-	sprite_anim = NULL;
 
 	primary.heat_level = 0;
 	primary.overheated = false;
@@ -100,10 +96,6 @@ void CPlayer::OnMouseMove(const MouseArgs *Args){
 
 void CPlayer::WeaponStatusUpdate(uint32 dt)
 {
-	//system("cls");
-	//std::cout << "\nHeat: " << primary.heat_level;
-	//std::cout << "\nAmmo: " << secondary.ammunition;
-	
 	if (!(InputState & STATE_TYPE::LMB) || primary.overheated)
 	{
 		if (primary.heat_level > 0)
@@ -221,7 +213,7 @@ void CPlayer::OnMouseButtonUp(const MouseArgs *Args)
 	}
 }
 
-void CPlayer::OnCollison(GameObject* obj){
+void CPlayer::OnCollision(GameObject* obj){
 	if (obj->GetType() == OBJECT_TYPE::SPRITE_ANIM)
 		std::cout << "Collide with sprite animation\n";
 

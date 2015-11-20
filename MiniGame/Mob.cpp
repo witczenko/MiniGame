@@ -10,7 +10,9 @@ CMob::CMob()
 	health = MOB_HEALTH;
 	velocity = MOB_VELOCITY;
 	damage = MOB_DAMAGE;
-	type = EFFECT_TYPE::UNDEFINED;
+	effect_type = EFFECT_TYPE::UNDEFINED;
+	type = OBJECT_TYPE::MOB;
+
 	target = glm::vec3(0.0f,0.0f,0.0f);
 	direction = glm::vec3(0.0f, 0.0f, 0.0f);
 }
@@ -22,7 +24,10 @@ CMob::CMob(const EFFECT_TYPE type)
 	health = MOB_HEALTH;
 	velocity = MOB_VELOCITY;
 	damage = MOB_DAMAGE;
-	this->type = type;
+	
+	effect_type = type;
+	this->type = OBJECT_TYPE::MOB;
+
 	direction = glm::vec3(0.0f, 0.0f, 0.0f);
 	target = glm::vec3(0.0f, 0.0f, 0.0f);
 }
@@ -81,4 +86,13 @@ void CMob::Update(uint32 dt)
 	printf("\nAngle: %f",sprite_anim->GetAngleZ());
 	RotateToTarget();
 	move(dt);
+}
+
+void CMob::OnCollision(GameObject* obj){
+	if (obj->GetType() == OBJECT_TYPE::PLAYER){
+		glm::vec3 pos = obj->GetPos();
+		pos.y -= 0.25;
+		obj->SetPos(pos);
+	}
+
 }

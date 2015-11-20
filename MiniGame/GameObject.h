@@ -24,20 +24,16 @@ public:
 
 	glm::vec3 GetPos() const;
 	void SetPos(glm::vec3 pos);
-<<<<<<< HEAD
 	void SetCollideFlag(bool flag);	
 	void SetCollisionRad(float rad);
-
 	bool GetCollideFlag() const;
 	float GetCollisionRad() const;
-=======
 	void SetPos(glm::vec2 pos);
->>>>>>> origin/master
 	uint32 GetID() const;
 	OBJECT_TYPE GetType() const;
 
 	virtual void Update(uint32 dt){};
-	virtual void OnCollison(GameObject* obj){};
+	virtual void OnCollision(GameObject* obj){};
 
 protected:
 	OBJECT_TYPE type;

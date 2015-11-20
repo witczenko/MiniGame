@@ -10,7 +10,6 @@ CScene::CScene()
 {
 }
 
-
 CScene::~CScene()
 {
 	cleanUp();
@@ -22,6 +21,7 @@ void CScene::Init(){
 
 void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	ObjectCollection[type].push_back(obj);
+
 	if (obj->GetCollideFlag())
 		CollideObjects.push_back(obj);
 
@@ -65,11 +65,8 @@ void CScene::Draw(){
 
 
 void CScene::Update(uint32 dt){
-<<<<<<< HEAD
 	proccessCollision();
-=======
 	GameObject *player = ObjectCollection[GameObject::OBJECT_TYPE::PLAYER][0];
->>>>>>> origin/master
 
 	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){
 		for (auto obj : ObjectCollection[i]){
@@ -106,8 +103,8 @@ void CScene::proccessCollision(){
 			obj12_vec = glm::vec2(obj2->GetPos()) - glm::vec2(obj1->GetPos());
 			
 			if (glm::length(obj12_vec) < (obj1->GetCollisionRad() + obj2->GetCollisionRad())){
-				obj1->OnCollison(obj2);
-				obj2->OnCollison(obj1);
+				obj1->OnCollision(obj2);
+				obj2->OnCollision(obj1);
 			}
 
 		}

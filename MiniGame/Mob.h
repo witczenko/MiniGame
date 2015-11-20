@@ -18,7 +18,7 @@ class CMob: public GameObject
 {
 	uint32 id;
 	uint16 health;
-	EFFECT_TYPE type;
+	EFFECT_TYPE effect_type;
 	uint16 damage;
 	float32 velocity;
 	glm::vec3 target;
@@ -29,6 +29,9 @@ class CMob: public GameObject
 	void move(uint32 dt);
 	void attack();
 	void die();
+
+protected:
+	void OnCollision(GameObject* obj);
 
 public:
 	CSpriteAnimation *sprite_anim;
