@@ -75,13 +75,13 @@ void CPlayer::OnKeyUp(const SDL_Keycode *Key){
 }
 
 void CPlayer::RotateToMouse(){
-	glm::vec2 mouse_vec, ref_vec(1.0f, 0.0), obj_pos;
+	glm::vec2 mouse_vec, ref_vec (0.0f, 1.0f), obj_pos;
 	CGame::GetGameIntance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
 	obj_pos.x = this->GetPos().x;
 	obj_pos.y = this->GetPos().y;
 	mouse_vec = glm::normalize(mouse_vec - obj_pos);
 	float angle = glm::orientedAngle(ref_vec, mouse_vec);
-	sprite_anim->SetAngleZ(angle-90.0f);
+	sprite_anim->SetAngleZ(angle);
 }
 
 void CPlayer::OnMouseMove(const MouseArgs *Args){
@@ -141,37 +141,36 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 	}
 }
 
-void CPlayer::Update(uint32 dt){
-	RotateToMouse();
-
+void CPlayer::move(uint32 dt)
+{
 	float time = dt / 1000.f;
-	glm::vec3 move = GameObject::GetPos();
+	glm::vec3 pos = GameObject::GetPos();
 
 	sprite_anim->SetPos(this->GetPos());
-	
+
 	WeaponStatusUpdate(dt);
 
 	if (InputState & STATE_TYPE::UP){
-		move.y += velocity*time;
+		pos.y += velocity*time;
 	}
 
 	if (InputState & STATE_TYPE::DOWN)
-		move.y -= velocity*time;
+		pos.y -= velocity*time;
 
 	if (InputState & STATE_TYPE::LEFT)
-		move.x -= velocity*time;
+		pos.x -= velocity*time;
 
 	if (InputState & STATE_TYPE::RIGHT){
-		move.x += velocity*time;
+		pos.x += velocity*time;
 	}
 
-	GameObject::SetPos(move);
-
+	GameObject::SetPos(pos);
 }
 
-
-
-
+void CPlayer::Update(uint32 dt){
+	RotateToMouse();
+	move(dt);
+}
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {

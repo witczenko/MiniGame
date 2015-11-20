@@ -73,6 +73,7 @@ public:
 private:
 	void WeaponStatusUpdate(uint32 dt);
 	void RotateToMouse();
+	void move(uint32 dt);
 
 	uint32 InputState;
 protected:

@@ -22,7 +22,13 @@ class CMob: public GameObject
 	uint16 damage;
 	float32 velocity;
 	glm::vec3 target;
-	glm::vec3 vector;
+	glm::vec3 direction;
+
+	void VectorUpdate();
+	void RotateToTarget();
+	void move(uint32 dt);
+	void attack();
+	void die();
 
 public:
 	CSpriteAnimation *sprite_anim;
@@ -32,14 +38,14 @@ public:
 	CMob(const EFFECT_TYPE type);
 	~CMob();
 
-	void move(uint32 dt);
-	void attack();
-	void die();
+	
 	void Update(uint32 dt);
+	void CleanUP();
+	
 
 	glm::vec3 getTarget();
 	void setTarget( const glm::vec3 target );
-	void VectorUpdate();
+	
 };
 
 #endif // MOB_H
