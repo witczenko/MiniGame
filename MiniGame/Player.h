@@ -75,6 +75,8 @@ public:
 	~CPlayer();
 private:
 	void WeaponStatusUpdate(uint32 dt);
+	void RotateToMouse();
+
 	uint32 InputState;
 protected:
 	void OnKeyDown(const SDL_Keycode *Key);
@@ -82,7 +84,7 @@ protected:
 	void OnMouseMove(const MouseArgs *Args);
 	void OnMouseButtonDown(const MouseArgs *Args);
 	void OnKeyUp(const SDL_Keycode *Key);
-	//void OnMouseButtonUp(const MouseArgs *Args);
+	void OnMouseButtonUp(const MouseArgs *Args);
 	//void OnMouseWheelBackward();
 	//void OnMouseWheelForward();
 };

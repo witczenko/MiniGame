@@ -74,38 +74,62 @@ void CPlayer::OnKeyUp(const SDL_Keycode *Key){
 
 }
 
-void CPlayer::OnMouseMove(const MouseArgs *Args){
+void CPlayer::RotateToMouse(){
 	glm::vec2 mouse_vec, ref_vec(1.0f, 0.0), obj_pos;
 	CGame::GetGameIntance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
-
 	obj_pos.x = this->GetPos().x;
 	obj_pos.y = this->GetPos().y;
-
 	mouse_vec = glm::normalize(mouse_vec - obj_pos);
 	float angle = glm::orientedAngle(ref_vec, mouse_vec);
 	sprite_anim->SetAngleZ(angle);
 }
 
+void CPlayer::OnMouseMove(const MouseArgs *Args){
+}
+
 void CPlayer::WeaponStatusUpdate(uint32 dt)
 {
+	//system("cls");
+	//std::cout << "\nHeat: " << primary.heat_level;
+	//std::cout << "\nAmmo: " << secondary.ammunition;
 	
-	std::cout << "\nHeat: " << primary.heat_level;
-	std::cout << "\nAmmo: " << secondary.ammunition;
-	if (primary.heat_level == HEAT_LIMIT)
+	if (!(InputState & STATE_TYPE::LMB) || primary.overheated)
 	{
-		primary.overheated = true;
-	}
-
-	if (primary.heat_level > 0)
-	{
-		if (primary.heat_level < (dt / 1000.0f))
+		if (primary.heat_level > 0)
 		{
-			primary.heat_level = 0;
-			primary.overheated = false;
+			if (primary.heat_level < dt)
+			{
+				primary.heat_level = 0;
+				primary.overheated = false;
+			}
+			else primary.heat_level -= dt;
 		}
-		else primary.heat_level -= (dt / 1000.0f);
 	}
 
+	if (InputState & STATE_TYPE::LMB)
+	{
+		if (!primary.overheated)
+		{
+			// shoot
+			// remember to call 
+			primary.heat_level += dt;
+			if (primary.heat_level >= HEAT_LIMIT)
+			{
+				primary.overheated = true;
+			}
+		}
+	}
+	
+	if (InputState & STATE_TYPE::RMB)
+	{
+		if (secondary.ready && (secondary.ammunition > 0))
+		{
+			//shoot
+			secondary.ready = false;
+			secondary.ammunition--;
+			secondary.reload_time = RELOAD_DELAY;
+		}
+	}
 
 	if (!secondary.ready)
 	{
@@ -119,10 +143,13 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 }
 
 void CPlayer::Update(uint32 dt){
+	RotateToMouse();
+
 	float time = dt / 1000.f;
 	glm::vec3 move = GameObject::GetPos();
 
 	sprite_anim->SetPos(this->GetPos());
+	
 	WeaponStatusUpdate(dt);
 
 	if (InputState & STATE_TYPE::UP){
@@ -149,30 +176,38 @@ void CPlayer::Update(uint32 dt){
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
-	std::cout << "Mouse click\n";
+	//std::cout << "Mouse click\n";
 	switch (Args->button)
 	{
 	case MLeft:
 	{
-				  if (!primary.overheated)
-				  {
-					  // shoot
-					  // remember to call 
-					  primary.heat_level++;
-				  }
-				  break;
+		InputState |= STATE_TYPE::LMB;
+		break;
 
 	}
 	case MRight:
 	{
-				   if (secondary.ready && (secondary.ammunition > 0))
-				   {
-					   //shoot
-					   secondary.ammunition--;
-					   secondary.ready = false;
-					   secondary.reload_time = RELOAD_DELAY;
-				   }
-				   break;
+		InputState |= STATE_TYPE::RMB;
+		break;
+
+	}
+	}
+}
+
+void CPlayer::OnMouseButtonUp(const MouseArgs *Args)
+{
+	switch (Args->button)
+	{
+	case MLeft:
+	{
+		InputState &= ~STATE_TYPE::LMB;
+		break;
+
+	}
+	case MRight:
+	{
+		InputState &= ~STATE_TYPE::RMB;
+		break;
 
 	}
 	}
