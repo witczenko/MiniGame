@@ -13,6 +13,8 @@
 CPlayer::CPlayer():
 InputState(0)
 {
+	type = OBJECT_TYPE::PLAYER;
+
 	health = HEALTH; // default health value
 	velocity = 3.0f; // default velocity
 	
@@ -35,6 +37,10 @@ InputState(0)
 
 CPlayer::~CPlayer()
 {
+	if (sprite_anim){
+		delete sprite_anim;
+		sprite_anim = NULL;
+	}
 }
 
 
@@ -211,4 +217,18 @@ void CPlayer::OnMouseButtonUp(const MouseArgs *Args)
 
 	}
 	}
+}
+
+void CPlayer::OnCollison(GameObject* obj){
+	if (obj->GetType() == OBJECT_TYPE::SPRITE_ANIM)
+		std::cout << "Collide with sprite animation\n";
+
+	glm::vec3 pos = obj->GetPos();
+
+	if (pos.x > this->GetPos().x)
+		pos.x += 0.25;
+	else
+		pos.x -= 0.25;
+
+	obj->SetPos(pos);
 }

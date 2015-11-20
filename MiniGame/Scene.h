@@ -11,10 +11,14 @@ class CScene
 {
 private:
 	std::vector<GameObject*> ObjectCollection[GameObject::TYPE_COUNT];
+	std::vector<GameObject*> CollideObjects;
+
 	CSpriteRenderer SpriteRenderer;
 	std::vector<CSprite*> AnimSpriteCollection;
 
 	void cleanUp();
+	void proccessCollision();
+
 public:
 	void AddObject(GameObject* obj, GameObject::OBJECT_TYPE type);
 	void Draw();

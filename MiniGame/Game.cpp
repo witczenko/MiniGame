@@ -42,7 +42,6 @@ CGame::~CGame()
 	log.dumpToFile("GAME_LOG.txt");
 	delete Cam;
 	delete Map1;
-	delete Player1;
 	delete MainScene;
 
 	SDL_GL_DeleteContext(MainGlContext);
@@ -289,18 +288,22 @@ bool CGame::Run(){
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
 
 	Player1->SetPos(init_pos1);
+	Player1->SetCollideFlag(true);
+
 	bool loaded = spriteAnim->LoadAnimation("gfx/Firing/Firing2__00",16);
 	spriteAnim->SetPos(init_pos1);
 	spriteAnim->SetFPS(90);
 	spriteAnim->SetHeight(0.4);
 	spriteAnim->SetWidth(0.4);
+	//spriteAnim->SetCollideFlag(true);
 
-	/*dupa = new CSpriteAnimation();
+	dupa = new CSpriteAnimation();
 	dupa->LoadAnimation("gfx/Opening/Opening__00", 7);
 	dupa->SetPos(init_pos3);
 	dupa->SetFPS(24);
 	dupa->SetHeight(0.4);
-	dupa->SetWidth(0.4);*/
+	dupa->SetWidth(0.4);
+	dupa->SetCollideFlag(true);
 
 
 	Player1->sprite_anim = spriteAnim;
@@ -310,7 +313,7 @@ bool CGame::Run(){
 	//Map1->DisplayTiles();
 
 	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
-	//->AddObject(dupa, GameObject::SPRITE_ANIM);
+	MainScene->AddObject(dupa, GameObject::SPRITE_ANIM);
 	MainScene->AddObject(Player1, GameObject::PLAYER);
 	
 

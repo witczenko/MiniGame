@@ -5,8 +5,6 @@
 #include <glm\glm.hpp>
 #include "Input.h"
 
-
-
 class GameObject : public CInputInterface
 {
 public:
@@ -25,11 +23,23 @@ public:
 
 	glm::vec3 GetPos() const;
 	void SetPos(glm::vec3 pos);
+	void SetCollideFlag(bool flag);	
+	void SetCollisionRad(float rad);
+
+	bool GetCollideFlag() const;
+	float GetCollisionRad() const;
 	uint32 GetID() const;
+	OBJECT_TYPE GetType() const;
 
 	virtual void Update(uint32 dt){};
+	virtual void OnCollison(GameObject* obj){};
 
+protected:
+	OBJECT_TYPE type;
 private:
+	
+	bool collide; 
+	float collsion_rad;
 	uint32 ID;
 	glm::vec3 pos;
 };

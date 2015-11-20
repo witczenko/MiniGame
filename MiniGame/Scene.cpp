@@ -21,6 +21,8 @@ void CScene::Init(){
 
 void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	ObjectCollection[type].push_back(obj);
+	if (obj->GetCollideFlag())
+		CollideObjects.push_back(obj);
 
 	switch (type){
 	case GameObject::SPRITE:{
@@ -54,6 +56,8 @@ void CScene::Draw(){
 
 
 void CScene::Update(uint32 dt){
+	proccessCollision();
+
 	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){
 		for (auto obj : ObjectCollection[i]){
 			obj->Update(dt);
@@ -63,40 +67,32 @@ void CScene::Update(uint32 dt){
 
 void CScene::cleanUp(){
 	//delete all game objects 
-	for (int i = 0; i < GameObject::TYPE_COUNT; i++)
+	for (size_t i = 0; i < GameObject::OBJECT_TYPE::TYPE_COUNT; i++)
 	{
-		switch (i){
-		case GameObject::SPRITE:{
-									for (auto sprite : ObjectCollection[GameObject::SPRITE]){
-										CSprite *s = (CSprite*)sprite;
-										delete s;
-									}
-									ObjectCollection[GameObject::SPRITE].clear();
-									break;
+		for (auto obj : ObjectCollection[i]){
+			if (obj){
+				delete obj;
+				obj = NULL;
+			}
 		}
-		case GameObject::SPRITE_ANIM:{
-										 for (auto spriteAnim : ObjectCollection[GameObject::SPRITE]){
-											 CSpriteAnimation *sa = (CSpriteAnimation*)spriteAnim;
-											 delete sa;
-										 }
-										 ObjectCollection[GameObject::SPRITE].clear();
-										 break;
-		}
-		case GameObject::PLAYER:{
-									//TODO Delete player
-									/* 
-									for (auto player : ObjectCollection[GameObject::PLAYER]){
-										CSpriteAnimation *pl = (CSpriteAnimation*)player;
-										delete pl;
-									}
-									ObjectCollection[GameObject::PLAYER].clear();
-									*/
-									break;
-		}
+		ObjectCollection[i].clear();
+	}
+}
 
+void CScene::proccessCollision(){
+	for (auto obj1 : CollideObjects){
+		for (auto obj2 : CollideObjects)
+		{
+			if (obj1 == obj2)
+				continue;
 
-
-
+			glm::vec2 obj12_vec;
+			obj12_vec = glm::vec2(obj2->GetPos()) - glm::vec2(obj1->GetPos());
+			
+			if (glm::length(obj12_vec) < (obj1->GetCollisionRad() + obj2->GetCollisionRad())){
+				obj1->OnCollison(obj2);
+				obj2->OnCollison(obj1);
+			}
 
 		}
 	}

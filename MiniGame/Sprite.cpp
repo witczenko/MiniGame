@@ -8,6 +8,7 @@ height(height),
 texId(textureId),
 angleZ(0.0f)
 {
+	type = OBJECT_TYPE::SPRITE;
 }
 
 CSprite::CSprite():
@@ -17,6 +18,7 @@ height(1.0),
 texId(0),
 angleZ(0.0f)
 {
+	type = OBJECT_TYPE::SPRITE;
 }
 
 CSprite::~CSprite(){

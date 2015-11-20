@@ -9,6 +9,7 @@ anim_time(),
 current_frame(0),
 frame_time(33)
 {
+	type = OBJECT_TYPE::SPRITE_ANIM;
 }
 
 CSpriteAnimation::CSpriteAnimation(glm::vec3 pos, float32 width, float32 height, uint32 textureId) :
@@ -19,6 +20,7 @@ anim_time(),
 current_frame(0),
 frame_time(33)
 {
+	type = OBJECT_TYPE::SPRITE_ANIM;
 }
 
 
