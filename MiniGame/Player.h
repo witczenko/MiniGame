@@ -27,22 +27,19 @@ enum STATE_TYPE{
 	RMB = 1<<5
 };
 
+static const float32 PLAYER_VELOCITY = 2.5f;
+static const uint16 PLAYER_EFFECT_DURATION = 3000;
+static const uint16 PLAYER_HEAT_LIMIT = 3000;
+static const uint16 PLAYER_RELOAD_DELAY = 2000;
+static const uint8 PLAYER_AMMUNITION = 5;
+static const uint8 PLAYER_PRIM_DMG = 1;
+static const uint8 PLAYER_SEC_DMG = 50;
+static const uint8 PLAYER_HEALTH = 100;
 
-struct PlayerInputState{
-	uint32 InputState;
-};
 
 class CPlayer : public GameObject //, public CSpriteAnimation ??? player animation ???
 {
 public:
-	static const uint16 EFFECT_DURATION = 3000;
-	static const uint16 HEAT_LIMIT = 3000;
-	static const uint16 RELOAD_DELAY = 2000;
-	static const uint8 AMMUNITION = 5;
-	static const uint8 PRIM_DMG = 10;
-	static const uint8 SEC_DMG = 30;
-	static const uint8 HEALTH = 100;
-	//static const float32 VELOCITY = 2.5f;
 
 	struct Effect{
 		EFFECT_TYPE type;
@@ -77,6 +74,7 @@ public:
 private:
 	void WeaponStatusUpdate(uint32 dt);
 	void RotateToMouse();
+	void move(uint32 dt);
 
 	uint32 InputState;
 protected:

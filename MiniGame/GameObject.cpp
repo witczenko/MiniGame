@@ -42,6 +42,7 @@ void GameObject::SetPos(glm::vec3 pos){
 	this->pos = pos;
 }
 
+<<<<<<< HEAD
 void GameObject::SetCollideFlag(bool flag){
 	this->collide = flag;
 }
@@ -56,6 +57,11 @@ void GameObject::SetCollisionRad(float rad){
 
 float GameObject::GetCollisionRad() const{
 	return this->collsion_rad;
+=======
+void GameObject::SetPos(glm::vec2 pos){
+	this->pos.x = pos.x;
+	this->pos.y = pos.y;
+>>>>>>> origin/master
 }
 
 GameObject::OBJECT_TYPE GameObject::GetType() const{

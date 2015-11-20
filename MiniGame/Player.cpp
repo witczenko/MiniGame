@@ -13,10 +13,15 @@
 CPlayer::CPlayer():
 InputState(0)
 {
+<<<<<<< HEAD
 	type = OBJECT_TYPE::PLAYER;
 
 	health = HEALTH; // default health value
 	velocity = 3.0f; // default velocity
+=======
+	health = PLAYER_HEALTH; // default health value
+	velocity = PLAYER_VELOCITY; // default velocity
+>>>>>>> origin/master
 	
 	for (int i = UNDEFINED; i < EFFECT_COUNT; i++) // default status array values
 	{
@@ -29,7 +34,7 @@ InputState(0)
 	primary.heat_level = 0;
 	primary.overheated = false;
 
-	secondary.ammunition = AMMUNITION;
+	secondary.ammunition = PLAYER_AMMUNITION;
 	secondary.ready = true;
 	secondary.reload_time = 0;
 }
@@ -81,7 +86,7 @@ void CPlayer::OnKeyUp(const SDL_Keycode *Key){
 }
 
 void CPlayer::RotateToMouse(){
-	glm::vec2 mouse_vec, ref_vec(1.0f, 0.0), obj_pos;
+	glm::vec2 mouse_vec, ref_vec (0.0f, 1.0f), obj_pos;
 	CGame::GetGameIntance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
 	obj_pos.x = this->GetPos().x;
 	obj_pos.y = this->GetPos().y;
@@ -117,9 +122,8 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 		if (!primary.overheated)
 		{
 			// shoot
-			// remember to call 
 			primary.heat_level += dt;
-			if (primary.heat_level >= HEAT_LIMIT)
+			if (primary.heat_level >= PLAYER_HEAT_LIMIT)
 			{
 				primary.overheated = true;
 			}
@@ -133,7 +137,7 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 			//shoot
 			secondary.ready = false;
 			secondary.ammunition--;
-			secondary.reload_time = RELOAD_DELAY;
+			secondary.reload_time = PLAYER_RELOAD_DELAY;
 		}
 	}
 
@@ -148,41 +152,39 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 	}
 }
 
-void CPlayer::Update(uint32 dt){
-	RotateToMouse();
-
+void CPlayer::move(uint32 dt)
+{
 	float time = dt / 1000.f;
-	glm::vec3 move = GameObject::GetPos();
+	glm::vec3 pos = GameObject::GetPos();
 
 	sprite_anim->SetPos(this->GetPos());
-	
+
 	WeaponStatusUpdate(dt);
 
 	if (InputState & STATE_TYPE::UP){
-		move.y += velocity*time;
+		pos.y += velocity*time;
 	}
 
 	if (InputState & STATE_TYPE::DOWN)
-		move.y -= velocity*time;
+		pos.y -= velocity*time;
 
 	if (InputState & STATE_TYPE::LEFT)
-		move.x -= velocity*time;
+		pos.x -= velocity*time;
 
 	if (InputState & STATE_TYPE::RIGHT){
-		move.x += velocity*time;
+		pos.x += velocity*time;
 	}
 
-	GameObject::SetPos(move);
-
+	GameObject::SetPos(pos);
 }
 
-
-
-
+void CPlayer::Update(uint32 dt){
+	RotateToMouse();
+	move(dt);
+}
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
-	//std::cout << "Mouse click\n";
 	switch (Args->button)
 	{
 	case MLeft:

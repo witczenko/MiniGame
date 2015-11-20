@@ -18,6 +18,7 @@
 #include "TextureManager.h"
 #include "MapHandler.h"
 #include "Player.h"
+#include "Mob.h"
 
 #include <iostream>
 #include <fstream>
@@ -79,6 +80,7 @@ private:
 	CScene *MainScene;
 	CMapHandler *Map1;
 	CPlayer *Player1;
+	CMob *Mob1,*Mob2;
 	bool lockCam;
 
 	//SDL events

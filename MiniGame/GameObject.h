@@ -14,6 +14,7 @@ public:
 		SPRITE,
 		SPRITE_ANIM,
 		TILE,
+		MOB,
 		TYPE_COUNT,
 	};
 
@@ -23,11 +24,15 @@ public:
 
 	glm::vec3 GetPos() const;
 	void SetPos(glm::vec3 pos);
+<<<<<<< HEAD
 	void SetCollideFlag(bool flag);	
 	void SetCollisionRad(float rad);
 
 	bool GetCollideFlag() const;
 	float GetCollisionRad() const;
+=======
+	void SetPos(glm::vec2 pos);
+>>>>>>> origin/master
 	uint32 GetID() const;
 	OBJECT_TYPE GetType() const;
 
