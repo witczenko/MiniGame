@@ -24,7 +24,6 @@ Map1(NULL),
 Player1(NULL),
 Mob1(NULL),
 Mob2(NULL),
-
 vsml(*VSMathLib::getInstance())
 {
 	log.addMessage("Start logging...");	
@@ -38,6 +37,57 @@ vsml(*VSMathLib::getInstance())
 	//ParseArgs(argc, args);
 }
 
+void SpawnMob(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
+	CMob *Mob = new CMob;
+	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
+	AnimTexData anim_data;
+
+	Mob->SetPos(pos);
+	Mob->SetCollideFlag(true);
+
+	if (texMan->GetAnimation(anim_prefix, anim_data)){
+		spriteAnim->SetAnimation(anim_data);
+		spriteAnim->SetPos(pos);
+		spriteAnim->SetFPS(24);
+		spriteAnim->SetHeight(0.1);
+		spriteAnim->SetWidth(0.3);
+		Mob->sprite_anim = spriteAnim;
+		scene->AddObject(Mob, GameObject::OBJECT_TYPE::MOB);
+	}
+	else{
+		delete Mob;
+		delete spriteAnim;
+	}
+
+	
+}
+
+void SpawnPlayer(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
+	CPlayer *Player = new CPlayer;
+	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
+	AnimTexData anim_data;
+
+	Player->SetPos(pos);
+	Player->SetCollideFlag(true);
+
+	if (texMan->GetAnimation(anim_prefix, anim_data)){
+		spriteAnim->SetAnimation(anim_data);
+		spriteAnim->SetPos(pos);
+		spriteAnim->SetFPS(24);
+		spriteAnim->SetHeight(0.4);
+		spriteAnim->SetWidth(0.4);
+
+		Player->sprite_anim = spriteAnim;
+		scene->AddObject(Player, GameObject::OBJECT_TYPE::PLAYER);
+	}
+	else{
+		delete Player;
+		delete spriteAnim;
+	}
+
+
+	
+}
 
 CGame::~CGame()
 {
@@ -273,9 +323,7 @@ bool CGame::Run(){
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
 	MainScene = new CScene;
 	Map1 = new CMapHandler;
-	Player1 = new CPlayer;
-	Mob1 = new CMob;
-	Mob2 = new CMob;
+	
 	
 	MainScene->Init();
 	textureMan.Init(); // <-- Here all textures are loaded
@@ -283,53 +331,18 @@ bool CGame::Run(){
 	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
 	uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
-
-	glm::vec3 init_pos1 = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 init_pos2 = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 init_pos3 = glm::vec3(0.0f, 0.0f, -0.1f);
-	glm::vec3 init_pos4 = glm::vec3(-1.0f, 0.0f, 0.1f);
-	glm::vec3 init_pos5 = glm::vec3(-1.0f, -1.0f, -0.1f);
-
-	CSpriteAnimation *spriteAnim = new CSpriteAnimation();
-	CSpriteAnimation *spriteAnim2 = new CSpriteAnimation();
-
-	Player1->SetPos(init_pos1);
-	Player1->SetCollideFlag(true);
-
-	bool loaded = spriteAnim->LoadAnimation("gfx/Blue/Animation/",8);
-	spriteAnim->SetPos(init_pos1);
-	spriteAnim->SetFPS(24);
-	spriteAnim->SetHeight(0.4);
-	spriteAnim->SetWidth(0.4);
-
-	Mob1->SetPos(init_pos5);
-	bool loaded2 = spriteAnim2->LoadAnimation("gfx/energy_ball/blue/keyframes/", 6);
-	spriteAnim2->SetPos(init_pos5);
-	spriteAnim2->SetFPS(24);
-	spriteAnim2->SetHeight(0.1f);
-	spriteAnim2->SetWidth(0.3f);
-
-	dupa = new CSpriteAnimation();
-	dupa->LoadAnimation("gfx/energy_ball/pink/keyframes/", 6);
-	dupa->SetPos(init_pos4);
-	dupa->SetFPS(24);
-	dupa->SetHeight(0.1);
-	dupa->SetWidth(0.3);
-
-	Player1->sprite_anim = spriteAnim;
-	Mob1->sprite_anim = spriteAnim2;
-	Mob2->sprite_anim = dupa;
-	Mob2->SetCollideFlag(true);
-	Mob1->SetCollideFlag(true);
+	
+	//ADD BACKGROUND 
+	MainScene->AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
+	
+	// CREATE MOBS AND PLAYER
+	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/energy_ball/pink/keyframes/");
+	SpawnPlayer(MainScene, &textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Blue/Animation/");
+	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/energy_ball/blue/keyframes/");
 	
 	//Map1->LoadTxtMap("maps/map1.txt");
 	//Map1->AddToScene(MainScene, &textureMan);
 	//Map1->DisplayTiles();
-
-	MainScene->AddObject(new CSprite(init_pos2, 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
-	MainScene->AddObject(Mob1, GameObject::MOB);
-	MainScene->AddObject(Player1, GameObject::PLAYER);
-	MainScene->AddObject(Mob2, GameObject::MOB);
 
 	char fps[64] = "";
 	uint32 acc = 0;
@@ -376,6 +389,8 @@ bool CGame::Run(){
 }
 
 void CGame::Update(uint32 dt){
+	basicShader.setUniform("time", GlobalTime/1000.0f);
+	GlobalTime += dt;
 	CInputManager::GetInputManager().Update(dt);
 	MainScene->Update(dt);
 

@@ -66,6 +66,8 @@ void CScene::Draw(){
 
 void CScene::Update(uint32 dt){
 	proccessCollision();
+
+	//Error when we don't create a Player!
 	GameObject *player = ObjectCollection[GameObject::OBJECT_TYPE::PLAYER][0];
 
 	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){

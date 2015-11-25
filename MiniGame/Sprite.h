@@ -47,9 +47,12 @@ private:
 	 void Init();
 
  private:
-	VSMathLib &vsml;
+	 VSMathLib &vsml;
 
 	 void GenBuffers();
+	 ///bool sort_func(GameObject *obj1, GameObject *obj);
+	 void OrderByZAxis();
+
 	 std::vector<CSprite*> spriteCollection;
 	 GLuint VAO;
 	 GLuint VBO;

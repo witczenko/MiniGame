@@ -131,6 +131,7 @@ void CSpriteRenderer::Render()
 
 void CSpriteRenderer::AddSprite(CSprite* sprite){
 	spriteCollection.push_back(sprite);
+	OrderByZAxis();
 }
 
 void CSpriteRenderer::GenBuffers(){
@@ -157,4 +158,14 @@ void CSpriteRenderer::GenBuffers(){
 
 	glBindVertexArray(0); //unbind??
 
+}
+
+bool sort_func(GameObject *obj1, GameObject *obj2){
+	return (obj1->GetPos().z < obj2->GetPos().z);
+}
+
+void CSpriteRenderer::OrderByZAxis(){
+	GameObject *temp;
+
+	std::sort(spriteCollection.begin(), spriteCollection.end(), sort_func);
 }
