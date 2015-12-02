@@ -31,18 +31,19 @@ public:
 		GRASS,
 		ICE,
 		WATER,
-		FIRE
+		FIRE,
+		TYPE_COUNT
 	};
 
 	CTile();
 	//CTile(CTile* kafel);
 	CTile(TILE_TYPE type, uint32 row, uint32 col);
-	TILE_TYPE getType();
-	uint32 getRow();
+	TILE_TYPE GetTileType();
+	uint32 GetRow();
 	~CTile();
 private:
 	uint32 id;
-	TILE_TYPE type;
+	TILE_TYPE tile_type;
 	uint32 row;
 	uint32 col;
 };

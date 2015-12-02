@@ -167,6 +167,7 @@ void CPlayer::move(uint32 dt)
 		pos.x += velocity*time;
 	}
 
+	old_pos = GameObject::GetPos();
 	GameObject::SetPos(pos);
 }
 
@@ -214,15 +215,7 @@ void CPlayer::OnMouseButtonUp(const MouseArgs *Args)
 }
 
 void CPlayer::OnCollision(GameObject* obj){
-	if (obj->GetType() == OBJECT_TYPE::SPRITE_ANIM)
-		std::cout << "Collide with sprite animation\n";
-
-	glm::vec3 pos = obj->GetPos();
-
-	if (pos.x > this->GetPos().x)
-		pos.x += 0.25;
-	else
-		pos.x -= 0.25;
-
-	obj->SetPos(pos);
+	if (obj->GetType() == OBJECT_TYPE::TILE){
+		this->SetPos(old_pos);
+	}
 }

@@ -74,13 +74,11 @@ private:
 	glm::vec2 normalizedMousePos; // <-- normalized mouse position value beetween [-1,1]
 	uint32 mouse_x; 
 	uint32 mouse_y; 
-
+	
+	CTextureManager textureMan;
 	VSBasicRender shapeRender;
-	CCamera *Cam;
-	CScene *MainScene;
-	CMapHandler *Map1;
-	CPlayer *Player1;
-	CMob *Mob1,*Mob2;
+	CCamera Cam;
+	CScene MainScene;
 	bool lockCam;
 
 	//SDL events
@@ -117,14 +115,13 @@ protected:
 public:	
 	bool Run();
 	virtual ~CGame();
-	
-	CCamera *GetCamera();
-	void GetWindowSize(uint32 &width, uint32 &height);
 
-	/* TODO */
 	void GetMousePos(uint32 &x, uint32 &y);
 	void GetNormalizedMousePos(float &x, float &y);
 	void GetMouse2dWorldPositon(float &x, float &y);
+	void GetWindowSize(uint32 &width, uint32 &height);
+	CScene& GetScene();
+	CCamera& GetCamera();
 
 	static CGame & GetGameIntance(){
 		static CGame Game;

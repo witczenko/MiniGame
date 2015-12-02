@@ -1,6 +1,7 @@
 
 #include "Mob.h"
 #include <glm/gtx/vector_angle.hpp>
+#include "Game.h"
 
 
 CMob::CMob()
@@ -83,7 +84,6 @@ void CMob::move(uint32 dt)
 
 void CMob::Update(uint32 dt)
 {
-	printf("\nAngle: %f",sprite_anim->GetAngleZ());
 	RotateToTarget();
 	move(dt);
 }
@@ -92,7 +92,6 @@ void CMob::OnCollision(GameObject* obj){
 	if (obj->GetType() == OBJECT_TYPE::PLAYER){
 		glm::vec3 pos = obj->GetPos();
 		pos.y -= 0.25;
-		obj->SetPos(pos);
+		//obj->SetPos(pos);
 	}
-
 }

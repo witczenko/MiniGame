@@ -20,6 +20,9 @@ void CScene::Init(){
 }
 
 void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
+	if (!obj || type == GameObject::OBJECT_TYPE::UNDEFINED)
+		return;
+
 	ObjectCollection[type].push_back(obj);
 
 	if (obj->GetCollideFlag())

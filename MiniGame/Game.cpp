@@ -1,12 +1,10 @@
 #include "Game.h"
 #include <glm/gtc/type_ptr.hpp>
-
+#include <time.h>
 #include "Animation.h"
 
 #define AXES_LENGTH (10e5)
 
-CTextureManager textureMan;
-CSpriteAnimation *dupa;
 
 float red[4] = { 1.0, 0.0, 0.0, 1.0 };
 float green[4] = { 0.0, 1.0, 0.0, 1.0 };
@@ -19,11 +17,7 @@ GlobalTime(0),
 GameRunning(true),
 mouse2dWorldPosition(0.0f, 0.0f),
 lockCam(false),
-MainScene(NULL),
-Map1(NULL),
-Player1(NULL),
-Mob1(NULL),
-Mob2(NULL),
+Cam(CCamera(FOV, ASPECT, 0.1f, 250.0f)),
 vsml(*VSMathLib::getInstance())
 {
 	log.addMessage("Start logging...");	
@@ -37,7 +31,7 @@ vsml(*VSMathLib::getInstance())
 	//ParseArgs(argc, args);
 }
 
-void SpawnMob(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
+void SpawnMob(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
 	CMob *Mob = new CMob;
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
 	AnimTexData anim_data;
@@ -49,10 +43,10 @@ void SpawnMob(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
-		spriteAnim->SetHeight(0.1);
-		spriteAnim->SetWidth(0.3);
+		spriteAnim->SetHeight(0.1f);
+		spriteAnim->SetWidth(0.3f);
 		Mob->sprite_anim = spriteAnim;
-		scene->AddObject(Mob, GameObject::OBJECT_TYPE::MOB);
+		scene.AddObject(Mob, GameObject::OBJECT_TYPE::MOB);
 	}
 	else{
 		delete Mob;
@@ -62,7 +56,7 @@ void SpawnMob(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::
 	
 }
 
-void SpawnPlayer(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
+void SpawnPlayer(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
 	CPlayer *Player = new CPlayer;
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
 	AnimTexData anim_data;
@@ -74,11 +68,11 @@ void SpawnPlayer(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const st
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
-		spriteAnim->SetHeight(0.4);
-		spriteAnim->SetWidth(0.4);
+		spriteAnim->SetHeight(0.4f);
+		spriteAnim->SetWidth(0.4f);
 
 		Player->sprite_anim = spriteAnim;
-		scene->AddObject(Player, GameObject::OBJECT_TYPE::PLAYER);
+		scene.AddObject(Player, GameObject::OBJECT_TYPE::PLAYER);
 	}
 	else{
 		delete Player;
@@ -92,9 +86,6 @@ void SpawnPlayer(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const st
 CGame::~CGame()
 {
 	log.dumpToFile("GAME_LOG.txt");
-	delete Cam;
-	delete Map1;
-	delete MainScene;
 
 	SDL_GL_DeleteContext(MainGlContext);
 	SDL_DestroyWindow(Win);
@@ -158,6 +149,7 @@ void CGame::LoadConfig(const char* filename){
 }
 
 bool CGame::Init(){
+	srand(time(NULL));
 
 	//INIT SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
@@ -305,7 +297,6 @@ void CGame::SetupShaders(){
 
 
 bool CGame::Run(){
-
 	uint32 OldTime = 0;
 	uint32 CurrentTime = 0;
 
@@ -320,32 +311,33 @@ bool CGame::Run(){
 	vsml.loadIdentity(VSMathLib::PROJECTION);
 	vsml.perspective(53.13f, ASPECT, 0.1f, 10000.0f);
 
-	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
-	MainScene = new CScene;
-	Map1 = new CMapHandler;
 	
-	
-	MainScene->Init();
-	textureMan.Init(); // <-- Here all textures are loaded
+	MainScene.Init();
+	textureMan.Init(); // <-- Here all textures and animations are loaded
 
 	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
 	uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
 	
 	//ADD BACKGROUND 
-	MainScene->AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
+	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
 	
-	// CREATE MOBS AND PLAYER
-	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/energy_ball/pink/keyframes/");
-	SpawnPlayer(MainScene, &textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Blue/Animation/");
-	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/energy_ball/blue/keyframes/");
+	 //create mobs and player
+	int j = 0;
+	for (float i = 0; i < 1.0; i = i + 0.01){
+		if (j % 3)
+			SpawnMob(MainScene, &textureMan, glm::vec3(-i, 100 * i, i), "gfx/energy_ball/pink/keyframes/");
+		else
+			SpawnMob(MainScene, &textureMan, glm::vec3(-i, 100 * i, i), "gfx/energy_ball/blue/keyframes/");
+		j++;
+	}
 	
-	//Map1->LoadTxtMap("maps/map1.txt");
-	//Map1->AddToScene(MainScene, &textureMan);
-	//Map1->DisplayTiles();
+	SpawnPlayer(MainScene, &textureMan, glm::vec3(-2.0f, 0.0f, 0.01f), "gfx/Blue/Animation/");
+	
+	
 
 	char fps[64] = "";
-	uint32 acc = 0;
+	uint32 acc = 0;\
 
 	/* Main Loop */
 	while (GameRunning){
@@ -381,7 +373,7 @@ bool CGame::Run(){
 				SDL_Delay(delay);
 		}
 		*/
-		//SDL_Delay(1);
+		SDL_Delay(1);
 	}
 
 
@@ -392,7 +384,7 @@ void CGame::Update(uint32 dt){
 	basicShader.setUniform("time", GlobalTime/1000.0f);
 	GlobalTime += dt;
 	CInputManager::GetInputManager().Update(dt);
-	MainScene->Update(dt);
+	MainScene.Update(dt);
 
 }
 
@@ -407,14 +399,14 @@ void CGame::Draw(uint32 dt){
 	vsml.loadIdentity(VSMathLib::MODEL);
 
 	// set camera
-	vsml.lookAt(Cam->GetPosition().x, Cam->GetPosition().y, Cam->GetPosition().z, 
-				  Cam->GetTarget().x, Cam->GetTarget().y, Cam->GetTarget().z, 0, 1, 0);
+	vsml.lookAt(Cam.GetPosition().x, Cam.GetPosition().y, Cam.GetPosition().z, 
+				  Cam.GetTarget().x, Cam.GetTarget().y, Cam.GetTarget().z, 0, 1, 0);
 
 	
 	vsml.pushMatrix(VSMathLib::MODEL);
 
 	basicShader.setUniform("texCount", 1);
-	MainScene->Draw();
+	MainScene.Draw();
 
 	vsml.popMatrix(VSMathLib::MODEL);
 
@@ -431,8 +423,8 @@ void CGame::OnKeyDown(const SDL_Keycode *Key){
 		GameRunning = false;
 	}else
 	if (*Key == SDLK_1) {
-		Cam->SetPosition(glm::vec3(0.0f, 0.0f, 4.0f));
-		Cam->SetTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+		Cam.SetPosition(glm::vec3(0.0f, 0.0f, 4.0f));
+		Cam.SetTarget(glm::vec3(0.0f, 0.0f, 0.0f));
 	}else
 	if (*Key == SDLK_2) {
 		lockCam = true;
@@ -475,8 +467,8 @@ void CGame::OnMouseMove(const MouseArgs *Args){
 
 	if (Args->button == MLeft){
 		if (!lockCam){
-			glm::vec3 CamPos = Cam->GetPosition();
-			glm::vec3 CamTarget = Cam->GetTarget();
+			glm::vec3 CamPos = Cam.GetPosition();
+			glm::vec3 CamTarget = Cam.GetTarget();
 
 			CamPos.x += (float32)(Args->dx / 200.0f)*CAM_SPEED;
 			CamPos.y -= (float32)(Args->dy / 200.0f)*CAM_SPEED;
@@ -485,8 +477,8 @@ void CGame::OnMouseMove(const MouseArgs *Args){
 			CamTarget.x += (float32)(Args->dx / 100.0f)*CAM_SPEED;
 			CamTarget.y -= (float32)(Args->dy / 59.0f)*CAM_SPEED;
 
-			Cam->SetPosition(CamPos);
-			Cam->SetTarget(CamTarget);
+			Cam.SetPosition(CamPos);
+			Cam.SetTarget(CamTarget);
 		}
 	}
 
@@ -513,17 +505,17 @@ void CGame::OnMouseButtonUp(const MouseArgs *Args){
 }
 
 void CGame::OnMouseWheelBackward(){
-	glm::vec3 CamPos = Cam->GetPosition();
+	glm::vec3 CamPos = Cam.GetPosition();
 	CamPos.z += 0.6f;
-	Cam->SetPosition(CamPos);
+	Cam.SetPosition(CamPos);
 }
 
 void CGame::OnMouseWheelForward(){
-	glm::vec3 CamPos = Cam->GetPosition();
+	glm::vec3 CamPos = Cam.GetPosition();
 	if ((CamPos.z - 0.6) > 0.1)
 	{
 		CamPos.z -= 0.6f;
-		Cam->SetPosition(CamPos);
+		Cam.SetPosition(CamPos);
 	}
 }
 
@@ -532,8 +524,8 @@ void CGame::CalculateMousePos(const MouseArgs *Args){
 	mouse_x = Args->x;
 	mouse_y = Args->y;
 	GameUtils::NormalizeMousePos(startCfg.winWidth, startCfg.winHeight, Args->x, Args->y, normalizedMousePos.x, normalizedMousePos.y);
-	glm::vec3 camPos = glm::vec3(Cam->GetPosition().x, Cam->GetPosition().y, Cam->GetPosition().z);
-	rayDir = GameUtils::CalcCamRay(normalizedMousePos, Cam->GetProjection(), Cam->GetView());
+	glm::vec3 camPos = glm::vec3(Cam.GetPosition().x, Cam.GetPosition().y, Cam.GetPosition().z);
+	rayDir = GameUtils::CalcCamRay(normalizedMousePos, Cam.GetProjection(), Cam.GetView());
 
 	/* mouse cursor coordinates on XY plane  (z==0.0f) */
 	mouse2dWorldPosition.x = (rayDir.x * ((-camPos.z) / rayDir.z)) + camPos.x;
@@ -559,7 +551,7 @@ void CGame::DrawAxes(void){
 }
 
 
-CCamera *CGame::GetCamera(){
+CCamera& CGame::GetCamera(){
 	return this->Cam;
 }
 
@@ -581,4 +573,8 @@ void CGame::GetNormalizedMousePos(float &x, float &y){
 void CGame::GetMouse2dWorldPositon(float &x, float &y){
 	x = this->mouse2dWorldPosition.x;
 	y = this->mouse2dWorldPosition.y;
+}
+
+CScene& CGame::GetScene(){
+	return MainScene;
 }

@@ -9,6 +9,8 @@
 
 class CScene
 {
+	friend class CGame;
+
 private:
 	std::vector<GameObject*> ObjectCollection[GameObject::TYPE_COUNT];
 	std::vector<GameObject*> CollideObjects;
@@ -18,12 +20,13 @@ private:
 
 	void cleanUp();
 	void proccessCollision();
-
-public:
-	void AddObject(GameObject* obj, GameObject::OBJECT_TYPE type);
 	void Draw();
 	void Init();
 	void Update(uint32 dt);
+
+public:
+	void AddObject(GameObject* obj, GameObject::OBJECT_TYPE type);
+	
 	CScene();
 	~CScene();
 };
