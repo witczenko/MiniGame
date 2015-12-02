@@ -2,7 +2,12 @@
 #include "Mob.h"
 #include <glm/gtx/vector_angle.hpp>
 #include "Game.h"
+#include <glm/gtx/rotate_vector.hpp>
 
+
+static const float MOB_VELOCITY = 1.5f;
+static const uint8 MOB_HEALTH = 100;
+static const uint8 MOB_DAMAGE = 10;
 
 CMob::CMob()
 {
@@ -33,7 +38,7 @@ CMob::CMob(const EFFECT_TYPE type)
 	target = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
-void CMob::CleanUP()
+void CMob::CleanUp()
 {
 	if (sprite_anim)
 	{
@@ -44,6 +49,7 @@ void CMob::CleanUP()
 
 CMob::~CMob()
 {
+	CleanUp();
 }
 
 
@@ -57,7 +63,7 @@ void CMob::setTarget(const glm::vec3 target)
 	this->target = target;
 }
 
-void CMob::VectorUpdate()
+void CMob::DirectionUpdate()
 {
 	if (glm::length(target - GetPos()) > 0.2)
 		direction = glm::normalize(target - GetPos());
@@ -67,15 +73,15 @@ void CMob::VectorUpdate()
 
 void CMob::RotateToTarget()
 {
-	VectorUpdate();
-	glm::vec2 ref_vec(-1.0f, 0.0f);
+	DirectionUpdate();
+	glm::vec2 ref_vec(0.0f, 1.0f);
 	glm::vec2 norm_direction(direction);
 	norm_direction = glm::normalize(norm_direction);
 	float angle = glm::orientedAngle(ref_vec, norm_direction);
 	sprite_anim->SetAngleZ(angle);
 }
 
-void CMob::move(uint32 dt)
+void CMob::Move(uint32 dt)
 {
 	glm::vec3 pos_incr = direction*MOB_VELOCITY*(float)(dt / 1000.0f);
 	SetPos(GetPos() + pos_incr);
@@ -85,13 +91,24 @@ void CMob::move(uint32 dt)
 void CMob::Update(uint32 dt)
 {
 	RotateToTarget();
-	move(dt);
+	Move(dt);
 }
 
+
 void CMob::OnCollision(GameObject* obj){
-	if (obj->GetType() == OBJECT_TYPE::PLAYER){
-		glm::vec3 pos = obj->GetPos();
-		pos.y -= 0.25;
-		//obj->SetPos(pos);
+	switch (obj->GetType())
+	{
+	case OBJECT_TYPE::PLAYER:
+	{
+		glm::vec3 obj_pos = obj->GetPos();
+		obj_pos += (this->direction)*0.1f;
+		obj->SetPos(obj_pos);
+		break;
+	}
+	case OBJECT_TYPE::MOB:
+	{
+		break;
+	}		
+		
 	}
 }

@@ -2,21 +2,19 @@
 #include "Player.h"
 #include "GameObject.h"
 #include "Types.h"
-
-
-//#include "Player.h"
-//#include "GameObject.h"
 #include "GameUtils.h"
 #include <glm/gtx/vector_angle.hpp>
 #include "Game.h"
+
+static const float32 PLAYER_VELOCITY = 2.5f;
+static const uint16 PLAYER_EFFECT_DURATION = 3000;
+static const uint8 PLAYER_HEALTH = 100;
 
 CPlayer::CPlayer():
 InputState(0),
 sprite_anim(NULL)
 {
 	type = OBJECT_TYPE::PLAYER;
-	health = PLAYER_HEALTH; // default health value
-	velocity = 3.0f; // default velocity
 	health = PLAYER_HEALTH; // default health value
 	velocity = PLAYER_VELOCITY; // default velocity
 	
@@ -26,13 +24,6 @@ sprite_anim(NULL)
 		status[i].active = false;
 		status[i].duration = 0;
 	}
-
-	primary.heat_level = 0;
-	primary.overheated = false;
-
-	secondary.ammunition = PLAYER_AMMUNITION;
-	secondary.ready = true;
-	secondary.reload_time = 0;
 }
 
 
@@ -98,53 +89,26 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 {
 	if (!(InputState & STATE_TYPE::LMB) || primary.overheated)
 	{
-		if (primary.heat_level > 0)
-		{
-			if (primary.heat_level < dt)
-			{
-				primary.heat_level = 0;
-				primary.overheated = false;
-			}
-			else primary.heat_level -= dt;
-		}
+		primary.CoolDown(dt);
 	}
 
 	if (InputState & STATE_TYPE::LMB)
 	{
-		if (!primary.overheated)
-		{
-			// shoot
-			primary.heat_level += dt;
-			if (primary.heat_level >= PLAYER_HEAT_LIMIT)
-			{
-				primary.overheated = true;
-			}
-		}
+		primary.Shoot(dt);
 	}
 	
 	if (InputState & STATE_TYPE::RMB)
 	{
-		if (secondary.ready && (secondary.ammunition > 0))
-		{
-			//shoot
-			secondary.ready = false;
-			secondary.ammunition--;
-			secondary.reload_time = PLAYER_RELOAD_DELAY;
-		}
+		secondary.Shoot();
 	}
 
 	if (!secondary.ready)
 	{
-		if (secondary.reload_time < dt)
-		{
-			secondary.reload_time = 0;
-			secondary.ready = true;
-		}
-		else secondary.reload_time -= dt;
+		secondary.Reload(dt);
 	}
 }
 
-void CPlayer::move(uint32 dt)
+void CPlayer::Move(uint32 dt)
 {
 	float time = dt / 1000.f;
 	glm::vec3 pos = GameObject::GetPos();
@@ -173,7 +137,8 @@ void CPlayer::move(uint32 dt)
 
 void CPlayer::Update(uint32 dt){
 	RotateToMouse();
-	move(dt);
+	WeaponStatusUpdate(dt);
+	Move(dt);
 }
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)

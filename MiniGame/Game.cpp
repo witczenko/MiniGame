@@ -5,7 +5,6 @@
 
 #define AXES_LENGTH (10e5)
 
-
 float red[4] = { 1.0, 0.0, 0.0, 1.0 };
 float green[4] = { 0.0, 1.0, 0.0, 1.0 };
 float blue[4] = { 0.0, 0.0, 1.0, 1.0 };
@@ -43,8 +42,8 @@ void SpawnMob(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
-		spriteAnim->SetHeight(0.1f);
-		spriteAnim->SetWidth(0.3f);
+		spriteAnim->SetHeight(0.3);
+		spriteAnim->SetWidth(0.3);
 		Mob->sprite_anim = spriteAnim;
 		scene.AddObject(Mob, GameObject::OBJECT_TYPE::MOB);
 	}
@@ -311,30 +310,18 @@ bool CGame::Run(){
 	vsml.loadIdentity(VSMathLib::PROJECTION);
 	vsml.perspective(53.13f, ASPECT, 0.1f, 10000.0f);
 
-	
 	MainScene.Init();
 	textureMan.Init(); // <-- Here all textures and animations are loaded
 
-	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
-	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
-	uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
-	
+	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1.png");
+
 	//ADD BACKGROUND 
 	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
 	
-	 //create mobs and player
-	int j = 0;
-	for (float i = 0; i < 1.0; i = i + 0.01){
-		if (j % 3)
-			SpawnMob(MainScene, &textureMan, glm::vec3(-i, 100 * i, i), "gfx/energy_ball/pink/keyframes/");
-		else
-			SpawnMob(MainScene, &textureMan, glm::vec3(-i, 100 * i, i), "gfx/energy_ball/blue/keyframes/");
-		j++;
-	}
-	
-	SpawnPlayer(MainScene, &textureMan, glm::vec3(-2.0f, 0.0f, 0.01f), "gfx/Blue/Animation/");
-	
-	
+	// CREATE MOBS AND PLAYER
+	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
+	SpawnPlayer(MainScene, &textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
+	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 
 	char fps[64] = "";
 	uint32 acc = 0;\

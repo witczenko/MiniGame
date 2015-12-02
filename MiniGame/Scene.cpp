@@ -52,10 +52,14 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	}
 	case GameObject::MOB:
 	{
-							CMob *s = (CMob*)obj;
-							SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
-							ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
-							break;
+						CMob *s = (CMob*)obj;
+						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
+						break;
+	}
+	default:
+	{
+
 	}
 	}
 }

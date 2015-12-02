@@ -9,11 +9,6 @@
 
 static uint32 MOB_NUMBER = 0;
 
-static const float MOB_VELOCITY = 1.5f;
-static const uint8 MOB_HEALTH = 100;
-static const uint8 MOB_DAMAGE = 10;
-
-
 class CMob: public GameObject
 {
 	uint32 id;
@@ -24,11 +19,11 @@ class CMob: public GameObject
 	glm::vec3 target;
 	glm::vec3 direction;
 
-	void VectorUpdate();
+	void DirectionUpdate();
 	void RotateToTarget();
-	void move(uint32 dt);
-	void attack();
-	void die();
+	void Move(uint32 dt);
+	//void attack();
+	//void die();
 
 protected:
 	void OnCollision(GameObject* obj);
@@ -43,7 +38,7 @@ public:
 
 	
 	void Update(uint32 dt);
-	void CleanUP();
+	void CleanUp();
 	
 
 	glm::vec3 getTarget();
