@@ -26,11 +26,16 @@ void CTextureManager::Init(){
 	LoadTexture("gfx/cursor.png");
 	LoadTexture("gfx/grid_color.png");
 	LoadTexture("gfx/bg.jpg");
+	LoadTexture("gfx/skybox/skybox1/1.png");
+	LoadTexture("gfx/Spaceship_art_pack/Background/background.jpg");
 
 	//here you can load animations!
-	LoadAnimation("gfx/Blue/Animation/", 8);
+	LoadAnimation("gfx/Spaceship_art_pack/Blue/Animation/", 8);
 	LoadAnimation("gfx/energy_ball/blue/keyframes/", 6);
 	LoadAnimation("gfx/energy_ball/pink/keyframes/", 6);
+	LoadAnimation("gfx/Spaceship_art_pack/Red/Enemy_animation/", 9);
+	LoadAnimation("gfx/Spaceship_art_pack/Blue/Enemy_animation/", 4);
+
 }
 
 bool CTextureManager::LoadTexture(const std::string & name){

@@ -6,7 +6,7 @@
 #define AXES_LENGTH (10e5)
 
 CTextureManager textureMan;
-CSpriteAnimation *dupa;
+//CSpriteAnimation *dupa;
 
 float red[4] = { 1.0, 0.0, 0.0, 1.0 };
 float green[4] = { 0.0, 1.0, 0.0, 1.0 };
@@ -21,9 +21,9 @@ mouse2dWorldPosition(0.0f, 0.0f),
 lockCam(false),
 MainScene(NULL),
 Map1(NULL),
-Player1(NULL),
-Mob1(NULL),
-Mob2(NULL),
+//Player1(NULL),
+//Mob1(NULL),
+//Mob2(NULL),
 vsml(*VSMathLib::getInstance())
 {
 	log.addMessage("Start logging...");	
@@ -49,7 +49,7 @@ void SpawnMob(CScene *scene, CTextureManager *texMan, glm::vec3 pos, const std::
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
-		spriteAnim->SetHeight(0.1);
+		spriteAnim->SetHeight(0.3);
 		spriteAnim->SetWidth(0.3);
 		Mob->sprite_anim = spriteAnim;
 		scene->AddObject(Mob, GameObject::OBJECT_TYPE::MOB);
@@ -322,23 +322,23 @@ bool CGame::Run(){
 
 	Cam = new CCamera(FOV, ASPECT, 0.1f, 250.0f);
 	MainScene = new CScene;
-	Map1 = new CMapHandler;
+	//Map1 = new CMapHandler;
 	
 	
 	MainScene->Init();
 	textureMan.Init(); // <-- Here all textures are loaded
 
-	uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
-	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/bg.jpg");
-	uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
+	//uint32 TEXTURE_1 = textureMan.GetTexture("gfx/grid_color.png");
+	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1.png");
+	//uint32 TEXTURE_3 = textureMan.GetTexture("gfx/cursor.png");
 	
 	//ADD BACKGROUND 
 	MainScene->AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
 	
 	// CREATE MOBS AND PLAYER
-	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/energy_ball/pink/keyframes/");
-	SpawnPlayer(MainScene, &textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Blue/Animation/");
-	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/energy_ball/blue/keyframes/");
+	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
+	SpawnPlayer(MainScene, &textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
+	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 	
 	//Map1->LoadTxtMap("maps/map1.txt");
 	//Map1->AddToScene(MainScene, &textureMan);

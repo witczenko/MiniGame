@@ -79,8 +79,8 @@ private:
 	CCamera *Cam;
 	CScene *MainScene;
 	CMapHandler *Map1;
-	CPlayer *Player1;
-	CMob *Mob1,*Mob2;
+	//CPlayer *Player1;
+	//CMob *Mob1,*Mob2;
 	bool lockCam;
 
 	//SDL events

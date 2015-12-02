@@ -15,6 +15,7 @@ public:
 		SPRITE_ANIM,
 		TILE,
 		MOB,
+		PROJECTILE,
 		TYPE_COUNT,
 	};
 

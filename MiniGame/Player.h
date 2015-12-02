@@ -4,6 +4,7 @@
 #include "Types.h"
 #include "GameObject.h"
 #include "Animation.h"
+#include "Weapon.h"
 
 enum EFFECT_TYPE{
 	UNDEFINED = 0,
@@ -27,17 +28,8 @@ enum STATE_TYPE{
 	RMB = 1<<5
 };
 
-static const float32 PLAYER_VELOCITY = 2.5f;
-static const uint16 PLAYER_EFFECT_DURATION = 3000;
-static const uint16 PLAYER_HEAT_LIMIT = 3000;
-static const uint16 PLAYER_RELOAD_DELAY = 2000;
-static const uint8 PLAYER_AMMUNITION = 5;
-static const uint8 PLAYER_PRIM_DMG = 1;
-static const uint8 PLAYER_SEC_DMG = 50;
-static const uint8 PLAYER_HEALTH = 100;
 
-
-class CPlayer : public GameObject //, public CSpriteAnimation ??? player animation ???
+class CPlayer : public GameObject
 {
 public:
 
@@ -47,22 +39,11 @@ public:
 		uint16 duration;
 	};
 
-	struct Prim_Weap{
-		bool overheated;
-		uint16 heat_level;
-	};
-
-	struct Sec_Weap{
-		bool ready;
-		uint16 ammunition;
-		uint16 reload_time;
-	};
-
 	uint8 health;
 	float32 velocity;
 	
-	Prim_Weap primary;
-	Sec_Weap secondary;
+	CRapidGun primary;
+	CRocketLauncher secondary;
 
 	CSpriteAnimation *sprite_anim;
 
@@ -74,7 +55,7 @@ public:
 private:
 	void WeaponStatusUpdate(uint32 dt);
 	void RotateToMouse();
-	void move(uint32 dt);
+	void Move(uint32 dt);
 
 	uint32 InputState;
 protected:
