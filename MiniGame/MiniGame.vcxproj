@@ -61,6 +61,16 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;FreeImage.lib;Box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)$(Configuration)\gfx"
+xcopy "$(SolutionDir)$(ProjectName)\gfx" "$(SolutionDir)$(Configuration)\gfx" /d /E
+xcopy "$(SolutionDir)$(ProjectName)\config.xml" "$(SolutionDir)$(Configuration)" /Y
+mkdir "$(SolutionDir)$(Configuration)\gfx\shaders"
+mkdir "$(SolutionDir)$(Configuration)\fonts"
+xcopy "$(SolutionDir)$(ProjectName)\fonts" "$(SolutionDir)$(Configuration)\fonts" /d /E
+xcopy "$(SolutionDir)$(ProjectName)\shaders" "$(SolutionDir)$(Configuration)\gfx\shaders" /d
+xcopy "$(SolutionDir)$(ProjectName)\bin" "$(SolutionDir)$(Configuration)" /d</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -117,6 +127,11 @@
   <ItemGroup>
     <None Include="..\Debug\shaders\dirlightdiffambpix.frag" />
     <None Include="..\Debug\shaders\dirlightdiffambpix.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -272,8 +272,8 @@ void CGame::InitVS(){
 void CGame::SetupShaders(){
 	// Shader for fonts and models
 	basicShader.init();
-	basicShader.loadShader(VSShaderLib::VERTEX_SHADER, "shaders/dirlightdiffambpix.vert");
-	basicShader.loadShader(VSShaderLib::FRAGMENT_SHADER, "shaders/dirlightdiffambpix.frag");
+	basicShader.loadShader(VSShaderLib::VERTEX_SHADER, "gfx/shaders/dirlightdiffambpix.vert");
+	basicShader.loadShader(VSShaderLib::FRAGMENT_SHADER, "gfx/shaders/dirlightdiffambpix.frag");
 
 	// set semantics for the shader variables
 	basicShader.setProgramOutput(0, "outputF");
@@ -316,7 +316,7 @@ bool CGame::Run(){
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1.png");
 
 	//ADD BACKGROUND 
-	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2), GameObject::SPRITE);
+	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2 ), GameObject::SPRITE);
 	
 	// CREATE MOBS AND PLAYER
 	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");

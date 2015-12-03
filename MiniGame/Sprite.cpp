@@ -164,8 +164,7 @@ bool sort_func(GameObject *obj1, GameObject *obj2){
 	return (obj1->GetPos().z < obj2->GetPos().z);
 }
 
-void CSpriteRenderer::OrderByZAxis(){
-	GameObject *temp;
 
+void CSpriteRenderer::OrderByZAxis(){
 	std::sort(spriteCollection.begin(), spriteCollection.end(), sort_func);
 }

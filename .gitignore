@@ -4,11 +4,15 @@ ehthumbs.db
 
 #CUSTOM IGNORES 
 Debug
+Release
 MiniGame/documentation
 MiniGame/libs
 MiniGame/Debug
 MiniGame/Release
-Assets
+MiniGame/gfx
+MiniGame/fonts
+MiniGame/bin
+Tools
 
 
 # Folder config file
