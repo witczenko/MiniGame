@@ -2,6 +2,7 @@
 #define WEAPON_H
 
 #include "Types.h"
+#include "Scene.h"
 
 /// CONSTANTS ///
 
@@ -29,7 +30,7 @@ public:
 	~CRapidGun();
 
 	void CoolDown(const uint32);
-	void Shoot(const uint32);
+	void Shoot(const uint32, CScene *scene);
 	void Update(const uint32 dt);
 };
 

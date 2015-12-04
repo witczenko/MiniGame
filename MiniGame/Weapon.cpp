@@ -1,4 +1,6 @@
 #include "Weapon.h"
+#include "Projectile.h"
+#include "Scene.h"
 
 /// RAPID GUN ///
 
@@ -34,11 +36,14 @@ void CRapidGun::CoolDown(const uint32 dt)
 
 }
 
-void CRapidGun::Shoot(const uint32 dt)
+
+
+void CRapidGun::Shoot(const uint32 dt, CScene *scene)
 {
 	if (!overheated)
 	{
 		// shoot
+		
 		heat_level += dt;
 		if (heat_level >= RAPID_GUN_HEAT_LIMIT)
 		{
@@ -49,8 +54,6 @@ void CRapidGun::Shoot(const uint32 dt)
 
 void CRapidGun::Update(const uint32 dt)
 {
-	if (overheated) CoolDown(dt);
-	else Shoot(dt);
 }
 
 /// ROCKET LAUNCHER ///

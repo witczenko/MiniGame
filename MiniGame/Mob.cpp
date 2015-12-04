@@ -9,7 +9,8 @@ static const float MOB_VELOCITY = 1.5f;
 static const uint8 MOB_HEALTH = 100;
 static const uint8 MOB_DAMAGE = 10;
 
-CMob::CMob()
+CMob::CMob():
+sprite_anim(NULL)
 {
 	id = MOB_NUMBER;
 	MOB_NUMBER++;
@@ -25,17 +26,10 @@ CMob::CMob()
 
 CMob::CMob(const EFFECT_TYPE type)
 {
-	id = MOB_NUMBER;
-	MOB_NUMBER++;
-	health = MOB_HEALTH;
-	velocity = MOB_VELOCITY;
-	damage = MOB_DAMAGE;
+	CMob();
 	
 	effect_type = type;
 	this->type = OBJECT_TYPE::MOB;
-
-	direction = glm::vec3(0.0f, 0.0f, 0.0f);
-	target = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 void CMob::CleanUp()
@@ -73,7 +67,7 @@ void CMob::DirectionUpdate()
 
 void CMob::RotateToTarget()
 {
-	DirectionUpdate();
+	
 	glm::vec2 ref_vec(0.0f, 1.0f);
 	glm::vec2 norm_direction(direction);
 	norm_direction = glm::normalize(norm_direction);
@@ -90,6 +84,7 @@ void CMob::Move(uint32 dt)
 
 void CMob::Update(uint32 dt)
 {
+	DirectionUpdate();
 	RotateToTarget();
 	Move(dt);
 }
