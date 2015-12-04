@@ -143,17 +143,21 @@ void CPlayer::Update(uint32 dt){
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
+	static float z = 0.1;
+	z += 0.05;
 	switch (Args->button)
 	{
 	case MLeft:
 	{
 		InputState |= STATE_TYPE::LMB;
+		SpawnMob(CGame::GetGameIntance().GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
 		break;
 
 	}
 	case MRight:
 	{
 		InputState |= STATE_TYPE::RMB;
+		SpawnMob(CGame::GetGameIntance().GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 		break;
 
 	}
@@ -182,5 +186,5 @@ void CPlayer::OnMouseButtonUp(const MouseArgs *Args)
 void CPlayer::OnCollision(GameObject* obj){
 	if (obj->GetType() == OBJECT_TYPE::TILE){
 		this->SetPos(old_pos);
-	}
+	}	
 }

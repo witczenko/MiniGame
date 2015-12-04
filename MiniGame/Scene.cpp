@@ -17,11 +17,17 @@ CScene::~CScene()
 
 void CScene::Init(){
 	SpriteRenderer.Init();
+	critical_section = false;
 }
 
 void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	if (!obj || type == GameObject::OBJECT_TYPE::UNDEFINED)
 		return;
+
+	if (critical_section){
+		PendingObjects.push_back(pending_obj_t(obj, type));
+		return;
+	}
 
 	ObjectCollection[type].push_back(obj);
 
@@ -72,6 +78,10 @@ void CScene::Draw(){
 
 
 void CScene::Update(uint32 dt){
+	for (auto pobj : PendingObjects)
+		this->AddObject(pobj.obj, pobj.type);
+
+	critical_section = true;
 	proccessCollision();
 
 	//Error when we don't create a Player!
@@ -85,6 +95,7 @@ void CScene::Update(uint32 dt){
 			obj->Update(dt);
 		}
 	}
+	critical_section = false;
 }
 
 void CScene::cleanUp(){

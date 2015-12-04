@@ -54,6 +54,8 @@ struct StartCfg{
 	int vSync;
 };
 
+void SpawnMob(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::string & anim_prefix);
+
 class CGame : CInputInterface {
 private:	
 	StartCfg startCfg; 
@@ -122,6 +124,7 @@ public:
 	void GetWindowSize(uint32 &width, uint32 &height);
 	CScene& GetScene();
 	CCamera& GetCamera();
+	CTextureManager& GetTextureManager();
 
 	static CGame & GetGameIntance(){
 		static CGame Game;

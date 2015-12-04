@@ -30,7 +30,7 @@ vsml(*VSMathLib::getInstance())
 	//ParseArgs(argc, args);
 }
 
-void SpawnMob(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
+void SpawnMob(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::string & anim_prefix){
 	CMob *Mob = new CMob;
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
 	AnimTexData anim_data;
@@ -38,7 +38,7 @@ void SpawnMob(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::
 	Mob->SetPos(pos);
 	Mob->SetCollideFlag(true);
 
-	if (texMan->GetAnimation(anim_prefix, anim_data)){
+	if (texMan.GetAnimation(anim_prefix, anim_data)){
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
@@ -55,7 +55,7 @@ void SpawnMob(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::
 	
 }
 
-void SpawnPlayer(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const std::string & anim_prefix){
+void SpawnPlayer(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::string & anim_prefix){
 	CPlayer *Player = new CPlayer;
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
 	AnimTexData anim_data;
@@ -63,7 +63,7 @@ void SpawnPlayer(CScene &scene, CTextureManager *texMan, glm::vec3 pos, const st
 	Player->SetPos(pos);
 	Player->SetCollideFlag(true);
 
-	if (texMan->GetAnimation(anim_prefix, anim_data)){
+	if (texMan.GetAnimation(anim_prefix, anim_data)){
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
@@ -319,9 +319,9 @@ bool CGame::Run(){
 	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2 ), GameObject::SPRITE);
 	
 	// CREATE MOBS AND PLAYER
-	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
-	SpawnPlayer(MainScene, &textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
-	SpawnMob(MainScene, &textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
+	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
+	SpawnPlayer(MainScene, textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
+	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 
 	char fps[64] = "";
 	uint32 acc = 0;\
@@ -564,4 +564,8 @@ void CGame::GetMouse2dWorldPositon(float &x, float &y){
 
 CScene& CGame::GetScene(){
 	return MainScene;
+}
+
+CTextureManager& CGame::GetTextureManager(){
+	return textureMan;
 }
