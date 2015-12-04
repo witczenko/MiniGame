@@ -1,4 +1,3 @@
-#pragma once
 #ifndef SCENE_H
 #define SCENE_H
 
@@ -6,7 +5,8 @@
 #include "GameObject.h"
 #include "Types.h"
 #include "Sprite.h"
-#include "Player.h"
+
+class CPlayer;
 
 class CScene
 {

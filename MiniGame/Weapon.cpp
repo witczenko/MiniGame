@@ -38,7 +38,7 @@ void CRapidGun::CoolDown(const uint32 dt)
 
 
 
-void CRapidGun::Shoot(const uint32 dt, CScene *scene)
+void CRapidGun::Shoot(const uint32 dt)
 {
 	if (!overheated)
 	{

@@ -11,7 +11,7 @@ static const uint32 RAPID_GUN_DAMAGE = 10;
 static const float BULLET_VELOCITY = 10.f;
 
 static const uint32 ROCKET_LAUNCHER_RELOAD_DELAY = 3000;
-const uint32 ROCKET_LAUNCHER_AMMUNITION = 10;
+static const uint32 ROCKET_LAUNCHER_AMMUNITION = 10;
 static const uint32 ROCKET_LAUNCHER_DAMAGE = 100;
 static const float ROCKET_VELOCITY = 4.f;
 
@@ -30,7 +30,7 @@ public:
 	~CRapidGun();
 
 	void CoolDown(const uint32);
-	void Shoot(const uint32, CScene *scene);
+	void Shoot(const uint32);
 	void Update(const uint32 dt);
 };
 

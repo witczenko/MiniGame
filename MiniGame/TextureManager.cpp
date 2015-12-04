@@ -23,6 +23,8 @@ void CTextureManager::Init(){
 	LoadTexture("gfx/cursor.png");
 	LoadTexture("gfx/skybox/skybox1/1.png");
 	LoadTexture("gfx/Spaceship_art_pack/Background/background.jpg");
+	LoadTexture("gfx/Spaceship_art_pack/Aestroids/aestroid_dark.png");
+	LoadTexture("gfx/Spaceship_art_pack/Aestroids/aestroid_brown.png");
 
 	VSLOGERR(CGame::GetGameIntance().GetLog(), "Load animations:\n");
 	//here you can load animations!
