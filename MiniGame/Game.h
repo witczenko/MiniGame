@@ -47,6 +47,16 @@
 #define GL_MAJOR ( 3 )
 #define GL_MINOR ( 1 )
 
+#define GAME_LOG_FILE	"game_log.txt"
+
+#define VSLOGERR(log, message, ...) \
+{\
+	printf(message, ## __VA_ARGS__);\
+	(log.addMessage(message, ## __VA_ARGS__)); \
+};
+
+
+
 struct StartCfg{
 	int fullScreen;
 	int winHeight;
@@ -125,6 +135,7 @@ public:
 	CScene& GetScene();
 	CCamera& GetCamera();
 	CTextureManager& GetTextureManager();
+	VSLogLib& GetLog();
 
 	static CGame & GetGameIntance(){
 		static CGame Game;

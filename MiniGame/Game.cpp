@@ -19,7 +19,6 @@ lockCam(false),
 Cam(CCamera(FOV, ASPECT, 0.1f, 250.0f)),
 vsml(*VSMathLib::getInstance())
 {
-	log.addMessage("Start logging...");	
 	/* Prepare initial config (basic settings) */
 	startCfg.fullScreen = false;
 	startCfg.winHeight = HEIGHT;
@@ -42,8 +41,8 @@ void SpawnMob(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::
 		spriteAnim->SetAnimation(anim_data);
 		spriteAnim->SetPos(pos);
 		spriteAnim->SetFPS(24);
-		spriteAnim->SetHeight(0.3);
-		spriteAnim->SetWidth(0.3);
+		spriteAnim->SetHeight(0.3f);
+		spriteAnim->SetWidth(0.3f);
 		Mob->sprite_anim = spriteAnim;
 		scene.AddObject(Mob, GameObject::OBJECT_TYPE::MOB);
 	}
@@ -77,15 +76,11 @@ void SpawnPlayer(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const st
 		delete Player;
 		delete spriteAnim;
 	}
-
-
-	
 }
 
 CGame::~CGame()
 {
-	log.dumpToFile("GAME_LOG.txt");
-
+	log.dumpToFile(GAME_LOG_FILE);
 	SDL_GL_DeleteContext(MainGlContext);
 	SDL_DestroyWindow(Win);
 	SDL_Quit();
@@ -147,19 +142,17 @@ void CGame::LoadConfig(const char* filename){
 
 }
 
-bool CGame::Init(){
+bool CGame::Init(){	
+	VSLOGERR(log, "---- Start logging ----\nInit SDL:\n");	
 	srand(time(NULL));
-
 	//INIT SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
-		std::cerr << SDL_GetError();
-		log.addMessage(SDL_GetError());		
-		log.dumpToFile("GAME_LOG.txt");
+		VSLOGERR(log, SDL_GetError());		
+		log.dumpToFile(GAME_LOG_FILE);
 		return false;
 	}
 
 	//SDL_ShowCursor(SDL_DISABLE);
-
 	//SET OPENGL CONTEXT TO 3.1
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR);
@@ -172,56 +165,52 @@ bool CGame::Init(){
 	break;
 
 	case 0:  //Win = SDL_CreateWindow("MiniGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, startCfg.winWidth, startCfg.winHeight, SDL_WINDOW_OPENGL );
-						  Win = SDL_CreateWindow("MiniGame", 0, 100, 
+						  Win = SDL_CreateWindow("SOBA - dev ", 0, 100, 
 												  startCfg.winWidth, startCfg.winHeight, SDL_WINDOW_OPENGL);
 	break;
 	}
 	
 	if (Win == 0){
-		std::cerr << SDL_GetError();
-		log.addMessage(SDL_GetError());
-		log.dumpToFile("GAME_LOG.txt");
+		VSLOGERR(log, SDL_GetError());
+		log.dumpToFile(GAME_LOG_FILE);
 		return false;
 	}
 
 	MainGlContext = SDL_GL_CreateContext(Win);
 
+	if (startCfg.vSync){
+		if (SDL_GL_SetSwapInterval(1) < 0)
+			VSLOGERR(log, "\tWarning: Unable to set VSync! SDL Error: %s\n", SDL_GetError())
+	}
+
 	/* GLEW STUFF */
 	glewExperimental = GL_TRUE;
 	GLenum glewError = glewInit();
 
+	//Check OpenGl extensions	
+	VSLOGERR(log, "Init OpenGL:\n");
 	if (glewError == GLEW_OK){
 		if (!glewIsSupported("GL_ARB_vertex_buffer_object"))
 		{
-			std::cerr <<"VBO is not supported by your graphic card\n";
-			log.addMessage("VBO is not supported by your graphic card");
-			log.dumpToFile("GAME_LOG.txt");	
+			VSLOGERR(log, "\tGL_ARB_vertex_buffer_object is not supported.");
+			log.dumpToFile(GAME_LOG_FILE);	
 		}	
 
 		if (!glewIsSupported("GL_EXT_direct_state_access")){
-			std::cerr << "DUPA is not supported\n";
+			VSLOGERR(log, "\tGL_EXT_direct_state_access is not supported.\n");
 		}
 
 		if (!glewIsSupported("GL_ARB_uniform_buffer_object")){
-			std::cerr << "UBO is not supported\n";
+			VSLOGERR(log, "\tGL_ARB_uniform_buffer_object is not supported.\n");
 		}
 
 		if (!glewIsSupported("GL_VERSION_3_1"))
 		{
-			std::cerr << "OpenGL 3.1 not supported!\n";	
-			log.addMessage("OpenGL 3.1 not supported!\n(twoja karta graficzna jest stara jak skala, lub masz stare drivery...)");
-			log.dumpToFile("GAME_LOG.txt");
+			VSLOGERR(log, "\tOpenGL 3.1 is not supported.\n");
 		}
-
-		if (startCfg.vSync){
-			if (SDL_GL_SetSwapInterval(1) < 0)
-					VSLOG(log, "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError())
-		}
-
 
 		//GL SETTINGS 
-		// Enable depth test
-		VSGLInfoLib::getGeneralInfo();
+		// Enable depth test	
 
 		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_CULL_FACE);
@@ -236,11 +225,11 @@ bool CGame::Init(){
 		//wireframe mode
 		//glPolygonMode(GL_FRONT, GL_LINE);
 		//glPolygonMode(GL_BACK, GL_LINE);
+		log.dumpToFile(GAME_LOG_FILE);
 	}
 	else{	
-		std::cerr << glewGetErrorString(glewError); 
-		log.addMessage((const char*)glewGetErrorString(glewError));
-		log.dumpToFile("GAME_LOG.txt");
+		VSLOGERR(log, (const char*)glewGetErrorString(glewError));
+		log.dumpToFile(GAME_LOG_FILE);
 		return false;
 	}
 	return true;
@@ -248,18 +237,14 @@ bool CGame::Init(){
 
 
 void CGame::InitVS(){
-
 	vsml.loadIdentity(VSMathLib::VIEW);
 	vsml.loadIdentity(VSMathLib::MODEL);
 	vsml.setUniformName(VSMathLib::PROJ_VIEW_MODEL, "projViewModelMatrix");
 	vsml.setUniformName(VSMathLib::NORMAL, "normalMatrix");
 
-
 	bool loaded = basicFont.load("fonts/couriernew10");
 	if (loaded == false){
-		//Log
-		std::cerr << "Cant load fonts/couriernew10 font...";
-		log.addMessage("Cant load fonts/couriernew10 font...");
+		VSLOGERR(log, "Cant load fonts/couriernew10 font...");
 	}
 
 	basicFont.setFixedFont(true);
@@ -280,22 +265,17 @@ void CGame::SetupShaders(){
 	basicShader.setVertexAttribName(VSShaderLib::VERTEX_COORD_ATTRIB, "position");
 	basicShader.setVertexAttribName(VSShaderLib::TEXTURE_COORD_ATTRIB, "texCoord");
 	basicShader.setVertexAttribName(VSShaderLib::NORMAL_ATTRIB, "normal");
-
 	basicShader.prepareProgram();
 
 	basicShader.useProgram();
-	//VSGLInfoLib::getProgramInfo(basicShader.getProgramIndex());
-	//VSGLInfoLib::getUniformsInfo(basicShader.getProgramIndex());
-	printf("%s\n", basicShader.getAllInfoLogs().c_str());
+	VSLOGERR(log, "Load shaders:\n\t%s\n\n", basicShader.getAllInfoLogs().c_str());
 	
-	//basicShader.setStandardMaterialUniforms();
 	basicShader.setUniform("texUnit", 0);
-
-	
 }
 
 
 bool CGame::Run(){
+	//VSGLInfoLib::getGeneralInfo();
 	uint32 OldTime = 0;
 	uint32 CurrentTime = 0;
 
@@ -326,6 +306,7 @@ bool CGame::Run(){
 	char fps[64] = "";
 	uint32 acc = 0;\
 
+	VSLOGERR(log, "\nGame running:\n");
 	/* Main Loop */
 	while (GameRunning){
 		GlobalTime = SDL_GetTicks();
@@ -568,4 +549,8 @@ CScene& CGame::GetScene(){
 
 CTextureManager& CGame::GetTextureManager(){
 	return textureMan;
+}
+
+VSLogLib& CGame::GetLog(){
+	return log;
 }

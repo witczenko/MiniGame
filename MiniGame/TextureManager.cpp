@@ -1,6 +1,4 @@
-#include "TextureManager.h"
-#include <stdlib.h>
-
+#include "Game.h"
 
 CTextureManager::CTextureManager()
 {
@@ -19,12 +17,14 @@ CTextureManager::~CTextureManager()
 
 
 void CTextureManager::Init(){
+	VSLOGERR(CGame::GetGameIntance().GetLog(), "Load textures:\n");
 	//Here you can load texures!
 	LoadTexture("gfx/no_texture.png");
 	LoadTexture("gfx/cursor.png");
 	LoadTexture("gfx/skybox/skybox1/1.png");
 	LoadTexture("gfx/Spaceship_art_pack/Background/background.jpg");
 
+	VSLOGERR(CGame::GetGameIntance().GetLog(), "Load animations:\n");
 	//here you can load animations!
 	LoadAnimation("gfx/Spaceship_art_pack/Blue/Animation/", 8);
 	LoadAnimation("gfx/Spaceship_art_pack/Red/Enemy_animation/", 9);
@@ -42,8 +42,10 @@ bool CTextureManager::LoadTexture(const std::string & name){
 			textures[name] = tex;
 			return true;
 		}
+		else{
+			VSLOGERR(CGame::GetGameIntance().GetLog(), "\tCannot load %s\n", name.c_str());
+		}
 	}
-
 	return false;
 }
 
@@ -61,6 +63,7 @@ uint32 CTextureManager::GetTexture(const std::string & name){
 		return tex->second;
 	}
 	else{
+		VSLOGERR(CGame::GetGameIntance().GetLog(), "Cannot get %s texture. Check texture name.\n", name.c_str());
 		return 0;
 	}
 }
@@ -89,6 +92,7 @@ bool CTextureManager::LoadAnimation(const std::string & prefix, uint32 count){
 				glDeleteTextures(1, &tex_id);
 				tex_id = j;
 			}
+			VSLOGERR(CGame::GetGameIntance().GetLog(), "\tCannot load %s animation.\n", prefix.c_str());
 			return false;
 		}
 	}
@@ -103,6 +107,8 @@ bool CTextureManager::GetAnimation(const std::string & prefix, AnimTexData &anim
 		anim_data = anim->second;
 		return true;
 	}
-	else 
+	else{
+		VSLOGERR(CGame::GetGameIntance().GetLog(), "Cannot find %s animation. Check animation prefix.\n", prefix.c_str());
 		return false;
+	}
 }
