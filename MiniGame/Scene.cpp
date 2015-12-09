@@ -107,11 +107,16 @@ void CScene::Update(uint32 dt){
 	//Error when we don't create a Player!
 	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){
 		for (auto obj : ObjectCollection[i]){
+
 			if (i == GameObject::OBJECT_TYPE::MOB){
 				if (player)
 					((CMob*)obj)->setTarget(player->GetPos());
 			}
-			obj->Update(dt);
+			if (obj)
+			{
+				obj->Update(dt);
+			}
+			
 		}
 	}
 	critical_section = false;

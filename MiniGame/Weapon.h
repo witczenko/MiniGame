@@ -35,8 +35,8 @@ public:
 	~CRapidGun();
 
 	void CoolDown(const uint32);
-	void CreateBullet();
-	void Shoot(const uint32);
+	void CreateBullet(const float angle);
+	void Shoot(const uint32 dt, const float angle);
 	void Update(const uint32 dt);
 };
 
@@ -59,8 +59,8 @@ public:
 	~CRocketLauncher();
 
 	void Reload(const uint32 dt);
-	void CreateRocket();
-	void Shoot(const uint32);
+	void CreateRocket(const float angle);
+	void Shoot(const uint32 dt, const float angle);
 	void Update(const uint32 dt);
 };
 

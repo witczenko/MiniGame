@@ -10,13 +10,6 @@ static const float PROJECTILE_VELOCITY = 100;
 
 /// PROJECTILE ///
 
-void CProjectile::CalculateDirection()
-{
-	glm::vec3 mouse_vec;// ref_vec(0.0f, 1.0f);
-	CGame::GetGameInstance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
-	this->direction = glm::normalize(mouse_vec - this->GetPos());
-}
-
 CProjectile::CProjectile():
 sprite_anim(NULL)
 {
@@ -25,8 +18,6 @@ sprite_anim(NULL)
 	PROJECTILE_AMOUNT++;
 	damage = PROJECTILE_DAMAGE;
 	velocity = PROJECTILE_VELOCITY;
-
-	CalculateDirection();
 }
 
 CProjectile::CProjectile(const uint32 damage, const float velocity):
@@ -47,9 +38,15 @@ CProjectile::~CProjectile()
 	}
 }
 
+void CProjectile::CalculateDirection()
+{
+	glm::vec3 mouse_vec;
+	CGame::GetGameInstance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
+	this->direction = glm::normalize(mouse_vec - this->GetPos());
+}
+
 void CProjectile::Move(const uint32 dt)
 {
-	direction = glm::vec3(0.1, 0.7, 0.1);
 	glm::vec3 pos_incr = this->direction*this->velocity*(float)(dt / 1000.0f);
 	this->SetPos(this->GetPos() + pos_incr);
 	this->sprite_anim->SetPos(this->GetPos());

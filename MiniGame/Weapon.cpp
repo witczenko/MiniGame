@@ -45,7 +45,7 @@ void CRapidGun::CoolDown(const uint32 dt)
 
 }
 
-void CRapidGun::CreateBullet()
+void CRapidGun::CreateBullet(const float angle)
 {
 	CProjectile *Bullet = new CProjectile(BULLET_DAMAGE, BULLET_VELOCITY);
 
@@ -53,12 +53,14 @@ void CRapidGun::CreateBullet()
 	{
 		Bullet->SetPos(this->pos);
 		Bullet->SetCollideFlag(true);
-
+		Bullet->CalculateDirection();
 		Bullet->sprite_anim = new CSpriteAnimation();
 		Bullet->sprite_anim->SetAnimation(this->sprite_anim->GetAnimation());
 		Bullet->sprite_anim->SetFPS(24);
 		Bullet->sprite_anim->SetHeight(0.1f);
 		Bullet->sprite_anim->SetWidth(0.1f);
+		Bullet->sprite_anim->SetPos(this->pos);
+		Bullet->sprite_anim->SetAngleZ(angle);
 
 		if (Bullet->sprite_anim)
 		Scene.AddObject(Bullet, GameObject::OBJECT_TYPE::PROJECTILE);
@@ -69,14 +71,14 @@ void CRapidGun::CreateBullet()
 }
 
 
-void CRapidGun::Shoot(const uint32 dt)
+void CRapidGun::Shoot(const uint32 dt, const float angle)
 {
 	static uint32 shoot_pause = 0;
 
 	if (!overheated)
 	{
 		if (shoot_pause > 50){
-			CreateBullet();
+			CreateBullet(angle);
 			shoot_pause = 0;
 		}
 		shoot_pause += dt;
@@ -131,7 +133,7 @@ void CRocketLauncher::Reload(const uint32 dt)
 	else reload_time -= dt;
 }
 
-void CRocketLauncher::CreateRocket()
+void CRocketLauncher::CreateRocket(const float angle)
 {
 
 	CProjectile *Rocket = new CProjectile(ROCKET_DAMAGE, ROCKET_VELOCITY);
@@ -140,8 +142,14 @@ void CRocketLauncher::CreateRocket()
 	{
 		Rocket->SetPos(this->pos);
 		Rocket->SetCollideFlag(true);
-
-		Rocket->sprite_anim = this->sprite_anim;
+		Rocket->CalculateDirection();
+		Rocket->sprite_anim = new CSpriteAnimation();
+		Rocket->sprite_anim->SetAnimation(this->sprite_anim->GetAnimation());
+		Rocket->sprite_anim->SetFPS(24);
+		Rocket->sprite_anim->SetHeight(0.2f);
+		Rocket->sprite_anim->SetWidth(0.2f);
+		Rocket->sprite_anim->SetPos(this->pos);
+		Rocket->sprite_anim->SetAngleZ(angle);
 
 		if (Rocket->sprite_anim)
 			Scene.AddObject(Rocket, GameObject::OBJECT_TYPE::PROJECTILE);
@@ -150,11 +158,11 @@ void CRocketLauncher::CreateRocket()
 	Rocket = NULL;
 }
 
-void CRocketLauncher::Shoot(uint32 dt)
+void CRocketLauncher::Shoot(const uint32 dt, const float angle)
 {
 	if (ready && (ammunition > 0))
 	{
-		CreateRocket();
+		CreateRocket(angle);
 		ready = false;
 		ammunition--;
 		reload_time = ROCKET_LAUNCHER_RELOAD_DELAY;

@@ -12,11 +12,11 @@ protected:
 	glm::vec3 direction;
 	float velocity;
 
-	void CalculateDirection();
+	
 	void Move(const uint32 dt);
 public:
 	CSpriteAnimation *sprite_anim;
-
+	void CalculateDirection();
 	void Update(uint32 dt);
 	void OnCollision();
 

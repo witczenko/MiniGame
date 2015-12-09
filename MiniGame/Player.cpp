@@ -93,12 +93,12 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 
 	if (InputState & STATE_TYPE::LMB)
 	{
-		primary.Shoot(dt);
+		primary.Shoot(dt,this->sprite_anim->GetAngleZ());
 	}
 	
 	if (InputState & STATE_TYPE::RMB)
 	{
-		secondary.Shoot(dt);
+		secondary.Shoot(dt,this->sprite_anim->GetAngleZ());
 	}
 
 	if (!secondary.ready)

@@ -349,7 +349,7 @@ bool CGame::Run(){
 	asterMan.Init();
 
 
-	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1a.png");
+	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1.png");
 
 	//ADD BACKGROUND 
 	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2 ), GameObject::SPRITE);
