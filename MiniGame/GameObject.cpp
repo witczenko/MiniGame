@@ -11,7 +11,7 @@ pos(START_POS),
 collsion_rad(COLLISON_RAD),
 collide(false),
 type(OBJECT_TYPE::UNDEFINED),
-Game(CGame::GetGameIntance())
+Game(CGame::GetGameInstance())
 {
 	ID = OBJECT_COUNTER;
 	OBJECT_COUNTER++;
@@ -22,7 +22,7 @@ pos(init_pos),
 collsion_rad(COLLISON_RAD),
 collide(false),
 type(OBJECT_TYPE::UNDEFINED),
-Game(CGame::GetGameIntance())
+Game(CGame::GetGameInstance())
 {
 	ID = OBJECT_COUNTER;
 	OBJECT_COUNTER++;

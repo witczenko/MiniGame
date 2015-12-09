@@ -16,6 +16,7 @@ public:
 	~CSpriteAnimation();
 
 	uint32 GetFrame() const; //return texture ID 
+	AnimTexData GetAnimation();
 	void SetAnimation(AnimTexData anim_data);
 	void SetFPS(uint32 fps);
 	void Update(uint32 dt);

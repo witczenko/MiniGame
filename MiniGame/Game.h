@@ -4,7 +4,6 @@
 #define FORCE_GL_3
 
 #include "GameUtils.h"
-
 #include "Camera.h"
 #include "TextureManager.h"
 #include "Scene.h"
@@ -73,7 +72,6 @@ private:
 	glm::vec2 normalizedMousePos; // <-- normalized mouse position value beetween [-1,1]
 	uint32 mouse_x; 
 	uint32 mouse_y; 
-	
 	CTextureManager textureMan;
 	VSBasicRender shapeRender;
 	CCamera Cam;
@@ -125,7 +123,7 @@ public:
 	VSLogLib& GetLog();
 	std::string& GetRenderLog();
 
-	static CGame & GetGameIntance(){
+	static CGame & GetGameInstance(){
 		static CGame Game;
 		return Game;
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <StartConfig>
-<!-- <Window Width="1366" Height="768" FullScreen="1"/> -->
-<Window Width="1920" Height="1080" FullScreen="0"/>
+<Window Width="1366" Height="768" FullScreen="0"/>
+  <!-- <Window Width="1920" Height="1080" FullScreen="0"/> -->
 <Graphics Vsync="1" />
 <Audio />
 <Control />

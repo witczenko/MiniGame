@@ -70,7 +70,7 @@ void CPlayer::OnKeyUp(const SDL_Keycode *Key){
 
 void CPlayer::RotateToMouse(){
 	glm::vec2 mouse_vec, ref_vec (0.0f, 1.0f), obj_pos;
-	CGame::GetGameIntance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
+	CGame::GetGameInstance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
 	obj_pos.x = this->GetPos().x;
 	obj_pos.y = this->GetPos().y;
 	mouse_vec = glm::normalize(mouse_vec - obj_pos);
@@ -83,6 +83,9 @@ void CPlayer::OnMouseMove(const MouseArgs *Args){
 
 void CPlayer::WeaponStatusUpdate(uint32 dt)
 {
+	primary.pos = this->GetPos();
+	secondary.pos = this->GetPos();
+
 	if (!(InputState & STATE_TYPE::LMB) || primary.overheated)
 	{
 		primary.CoolDown(dt);
@@ -95,7 +98,7 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 	
 	if (InputState & STATE_TYPE::RMB)
 	{
-		secondary.Shoot();
+		secondary.Shoot(dt);
 	}
 
 	if (!secondary.ready)
@@ -111,7 +114,6 @@ void CPlayer::Move(uint32 dt)
 
 	sprite_anim->SetPos(this->GetPos());
 
-	WeaponStatusUpdate(dt);
 
 	if (InputState & STATE_TYPE::UP){
 		pos.y += velocity*time;
@@ -146,22 +148,18 @@ void CPlayer::Update(uint32 dt){
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
-	static float z = 0.1f;
-	z += 0.05f;
 	switch (Args->button)
 	{
 	case MLeft:
 	{
-		InputState |= STATE_TYPE::LMB;
-		SpawnMob(Game.GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
-		break;
+				  InputState |= STATE_TYPE::LMB;
+				  break;
 
 	}
 	case MRight:
 	{
-		InputState |= STATE_TYPE::RMB;
-		SpawnMob(Game.GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
-		break;
+				   InputState |= STATE_TYPE::RMB;
+				   break;
 
 	}
 	}

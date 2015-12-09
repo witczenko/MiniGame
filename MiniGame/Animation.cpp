@@ -51,3 +51,7 @@ void CSpriteAnimation::Update(uint32 dt){
 	this->AssingTexture(anim_data.start_tex+current_frame);
 }
 
+AnimTexData CSpriteAnimation::GetAnimation()
+{
+	return anim_data;
+}

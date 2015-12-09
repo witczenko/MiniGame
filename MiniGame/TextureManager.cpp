@@ -17,7 +17,7 @@ CTextureManager::~CTextureManager()
 
 
 void CTextureManager::Init(){
-	VSLOGERR(CGame::GetGameIntance().GetLog(), "Load textures:\n");
+	VSLOGERR(CGame::GetGameInstance().GetLog(), "Load textures:\n");
 	//Here you can load texures!
 	LoadTexture("gfx/no_texture.png");
 	LoadTexture("gfx/cursor.png");
@@ -27,13 +27,13 @@ void CTextureManager::Init(){
 	LoadTexture("gfx/Spaceship_art_pack/Aestroids/aestroid_dark.png");
 	LoadTexture("gfx/Spaceship_art_pack/Aestroids/aestroid_brown.png");
 
-	VSLOGERR(CGame::GetGameIntance().GetLog(), "Load animations:\n");
+	VSLOGERR(CGame::GetGameInstance().GetLog(), "Load animations:\n");
 	//here you can load animations!
 	LoadAnimation("gfx/Spaceship_art_pack/Blue/Animation/", 8);
 	LoadAnimation("gfx/Spaceship_art_pack/Red/Enemy_animation/", 9);
 	LoadAnimation("gfx/Spaceship_art_pack/Blue/Enemy_animation/", 4);
-	LoadAnimation("gfx/Spaceship_art_pack/Blue/Bullet", 1);
-	LoadAnimation("gfx/Spaceship_art_pack/Blue/Spacebombs/", 3);
+	LoadAnimation("gfx/Spaceship_art_pack/Blue/Bullet/", 1);
+	LoadAnimation("gfx/Spaceship_art_pack/Blue/Spacebombs/", 2);
 
 }
 
@@ -46,7 +46,7 @@ bool CTextureManager::LoadTexture(const std::string & name){
 			return true;
 		}
 		else{
-			VSLOGERR(CGame::GetGameIntance().GetLog(), "\tCannot load %s\n", name.c_str());
+			VSLOGERR(CGame::GetGameInstance().GetLog(), "\tCannot load %s\n", name.c_str());
 		}
 	}
 	return false;
@@ -66,7 +66,7 @@ uint32 CTextureManager::GetTexture(const std::string & name){
 		return tex->second;
 	}
 	else{
-		VSLOGERR(CGame::GetGameIntance().GetLog(), "Cannot get %s texture. Check texture name.\n", name.c_str());
+		VSLOGERR(CGame::GetGameInstance().GetLog(), "Cannot get %s texture. Check texture name.\n", name.c_str());
 		return 0;
 	}
 }
@@ -95,7 +95,7 @@ bool CTextureManager::LoadAnimation(const std::string & prefix, uint32 count){
 				glDeleteTextures(1, &tex_id);
 				tex_id = j;
 			}
-			VSLOGERR(CGame::GetGameIntance().GetLog(), "\tCannot load %s animation.\n", prefix.c_str());
+			VSLOGERR(CGame::GetGameInstance().GetLog(), "\tCannot load %s animation.\n", prefix.c_str());
 			return false;
 		}
 	}
@@ -111,7 +111,7 @@ bool CTextureManager::GetAnimation(const std::string & prefix, AnimTexData &anim
 		return true;
 	}
 	else{
-		VSLOGERR(CGame::GetGameIntance().GetLog(), "Cannot find %s animation. Check animation prefix.\n", prefix.c_str());
+		VSLOGERR(CGame::GetGameInstance().GetLog(), "Cannot find %s animation. Check animation prefix.\n", prefix.c_str());
 		return false;
 	}
 }

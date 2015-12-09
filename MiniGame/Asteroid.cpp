@@ -4,7 +4,7 @@ static const int32 ASTER_BASE_DURABILITY = 100;
 static const float32 ASTER_BASE_VELOCITY = 0.08f;
 static const float32 ASTER_BASE_ANGULAR_VELOCITY = 250.0f;
 static const int32 ASTER_MANAGER_ASTER_COUNT = 20;
-static const glm::vec3 ASTER_BASE_DIR(0.1f, -1.0f, 0.0f);
+static const glm::vec3 ASTER_BASE_DIR(0.0f, -1.0f, 0.0f);
 
 /* ASTEROID */
 CAsteroid::CAsteroid():
@@ -55,7 +55,7 @@ void CAsteroid::Update(uint32 dt){
 
 /* ---- ASTEROID MANAGER ---- */
 CAsteroidManager::CAsteroidManager() :
-Game(CGame::GetGameIntance())
+Game(CGame::GetGameInstance())
 {
 }
 

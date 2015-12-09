@@ -3,8 +3,8 @@
 #include "Mob.h"
 #include "Asteroid.h"
 #include "Game.h"
+#include "Projectile.h"
 
-glm::vec3 AnimInitPos(0.0f, 0.0f, 0.0f);
 
 CScene::CScene():
 player(NULL)
@@ -66,8 +66,15 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 						break;
 	}
 	case GameObject::ASTEROID:{
-					    CAsteroid *aster = (CAsteroid*)obj;
-						SpriteRenderer.AddSprite(aster->sprite);
+								  CAsteroid *aster = (CAsteroid*)obj;
+								  SpriteRenderer.AddSprite(aster->sprite);
+								  break;
+	}
+	case GameObject::PROJECTILE:
+	{
+						CProjectile *s = (CProjectile*)obj;
+						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
 	}
 	default:
@@ -87,11 +94,11 @@ void CScene::Draw(){
 void CScene::Update(uint32 dt){
 	if (player){
 		glm::vec3 newCamPos = player->GetPos();
-		CGame::GetGameIntance().GetCamera().SetTarget(newCamPos);
-		newCamPos.z = CGame::GetGameIntance().GetCamera().GetPosition().z;
+		CGame::GetGameInstance().GetCamera().SetTarget(newCamPos);
+		newCamPos.z = CGame::GetGameInstance().GetCamera().GetPosition().z;
 		newCamPos.x /= 0.97f;
 		newCamPos.y /= 0.97f;
-		CGame::GetGameIntance().GetCamera().SetPosition(newCamPos);
+		CGame::GetGameInstance().GetCamera().SetPosition(newCamPos);
 	}
 
 	critical_section = true;

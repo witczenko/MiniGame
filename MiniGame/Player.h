@@ -38,6 +38,7 @@ public:
 		bool active;
 		uint16 duration;
 	};
+	//CScene &Scene;
 
 	uint8 health;
 	float32 velocity;
