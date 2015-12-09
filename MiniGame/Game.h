@@ -76,7 +76,6 @@ private:
 	glm::vec2 normalizedMousePos; // <-- normalized mouse position value beetween [-1,1]
 	uint32 mouse_x; 
 	uint32 mouse_y; 
-	
 	CTextureManager textureMan;
 	VSBasicRender shapeRender;
 	CCamera Cam;
@@ -126,7 +125,7 @@ public:
 	CCamera& GetCamera();
 	CTextureManager& GetTextureManager();
 
-	static CGame & GetGameIntance(){
+	static CGame & GetGameInstance(){
 		static CGame Game;
 		return Game;
 	}

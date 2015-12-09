@@ -74,7 +74,7 @@ void CPlayer::OnKeyUp(const SDL_Keycode *Key){
 
 void CPlayer::RotateToMouse(){
 	glm::vec2 mouse_vec, ref_vec (0.0f, 1.0f), obj_pos;
-	CGame::GetGameIntance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
+	CGame::GetGameInstance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
 	obj_pos.x = this->GetPos().x;
 	obj_pos.y = this->GetPos().y;
 	mouse_vec = glm::normalize(mouse_vec - obj_pos);
@@ -87,6 +87,9 @@ void CPlayer::OnMouseMove(const MouseArgs *Args){
 
 void CPlayer::WeaponStatusUpdate(uint32 dt)
 {
+	primary.pos = this->GetPos();
+	secondary.pos = this->GetPos();
+
 	if (!(InputState & STATE_TYPE::LMB) || primary.overheated)
 	{
 		primary.CoolDown(dt);
@@ -99,7 +102,7 @@ void CPlayer::WeaponStatusUpdate(uint32 dt)
 	
 	if (InputState & STATE_TYPE::RMB)
 	{
-		secondary.Shoot();
+		secondary.Shoot(dt);
 	}
 
 	if (!secondary.ready)
@@ -143,6 +146,7 @@ void CPlayer::Update(uint32 dt){
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
+	/*
 	static float z = 0.1;
 	z += 0.05;
 	switch (Args->button)
@@ -161,7 +165,8 @@ void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 		break;
 
 	}
-	}
+	}*/
+	
 }
 
 void CPlayer::OnMouseButtonUp(const MouseArgs *Args)

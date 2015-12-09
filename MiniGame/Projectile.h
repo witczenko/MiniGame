@@ -2,6 +2,7 @@
 #define PROJECTILE_H
 
 #include "GameObject.h"
+//#include "Animation.h"
 
 class CProjectile : public GameObject
 {
@@ -14,7 +15,9 @@ protected:
 	void CalculateDirection();
 	void Move(const uint32 dt);
 public:
-	//void Update(uint32 dt);
+	CSpriteAnimation *sprite_anim;
+
+	void Update(uint32 dt);
 	void OnCollision();
 
 	CProjectile();

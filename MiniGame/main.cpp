@@ -2,6 +2,6 @@
 #include "Game.h"
 
 int wmain( int argc, char* args[] ){
-	CGame::GetGameIntance().Run();
+	CGame::GetGameInstance().Run();
 	return 0;
 }

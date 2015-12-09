@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "Player.h"
 #include "Mob.h"
+#include "Projectile.h"
 
 glm::vec3 AnimInitPos(0.0f, 0.0f, 0.0f);
 
@@ -59,6 +60,13 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	case GameObject::MOB:
 	{
 						CMob *s = (CMob*)obj;
+						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
+						break;
+	}
+	case GameObject::PROJECTILE:
+	{
+						CProjectile *s = (CProjectile*)obj;
 						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
 						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;

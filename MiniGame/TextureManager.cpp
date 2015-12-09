@@ -30,7 +30,7 @@ void CTextureManager::Init(){
 	LoadAnimation("gfx/Spaceship_art_pack/Red/Enemy_animation/", 9);
 	LoadAnimation("gfx/Spaceship_art_pack/Blue/Enemy_animation/", 4);
 	LoadAnimation("gfx/Spaceship_art_pack/Blue/Bullet", 1);
-	LoadAnimation("gfx/Spaceship_art_pack/Blue/Spacebombs/", 3);
+	LoadAnimation("gfx/Spaceship_art_pack/Blue/Spacebombs/", 2);
 
 }
 

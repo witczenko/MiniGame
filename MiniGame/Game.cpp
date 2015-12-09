@@ -55,7 +55,7 @@ void SpawnMob(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::
 	
 }
 
-void SpawnPlayer(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::string & anim_prefix){
+void SpawnPlayer(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const std::string & anim_prefix, const std::string & bullet_anim_prefix, const std::string & rocket_anim_prefix){
 	CPlayer *Player = new CPlayer;
 	CSpriteAnimation *spriteAnim = new CSpriteAnimation;
 	AnimTexData anim_data;
@@ -72,11 +72,52 @@ void SpawnPlayer(CScene &scene, CTextureManager &texMan, glm::vec3 pos, const st
 
 		Player->sprite_anim = spriteAnim;
 		scene.AddObject(Player, GameObject::OBJECT_TYPE::PLAYER);
+
+		spriteAnim = NULL;
+		spriteAnim = new CSpriteAnimation;
+
+		if (texMan.GetAnimation(bullet_anim_prefix, anim_data))
+		{
+			spriteAnim->SetAnimation(anim_data);
+			spriteAnim->SetPos(pos);
+			spriteAnim->SetFPS(24);
+			spriteAnim->SetHeight(0.1f);
+			spriteAnim->SetWidth(0.1f);
+
+			Player->primary.sprite_anim = spriteAnim;
+		}
+		else
+		{
+			delete spriteAnim;
+			spriteAnim = NULL;
+		}
+		
+		spriteAnim = NULL;
+		spriteAnim = new CSpriteAnimation;
+
+		if (texMan.GetAnimation(rocket_anim_prefix, anim_data))
+		{
+			spriteAnim->SetAnimation(anim_data);
+			spriteAnim->SetPos(pos);
+			spriteAnim->SetFPS(24);
+			spriteAnim->SetHeight(0.2f);
+			spriteAnim->SetWidth(0.2f);
+
+			Player->secondary.sprite_anim = spriteAnim;
+		}
+		else
+		{
+			delete spriteAnim;
+			spriteAnim = NULL;
+		}
 	}
 	else{
 		delete Player;
 		delete spriteAnim;
+		spriteAnim = NULL;
 	}
+
+	
 
 
 	
@@ -320,7 +361,7 @@ bool CGame::Run(){
 	
 	// CREATE MOBS AND PLAYER
 	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
-	SpawnPlayer(MainScene, textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
+	SpawnPlayer(MainScene, textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/","gfx/Spaceship_art_pack/Blue/Bullet/","gfx/Spaceship_art_pack/Blue/Spacebombs/");
 	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 
 	char fps[64] = "";
