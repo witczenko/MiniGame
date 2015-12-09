@@ -1,13 +1,25 @@
 #include "Game.h"
-#include <glm/gtc/type_ptr.hpp>
-#include <time.h>
+#include "GameUtils.h"
 #include "Animation.h"
+#include "Types.h"
+#include <GL/glew.h>
+#include "SDL/SDL.h"
+#include "Input.h"
+#include "Camera.h"
+#include "Scene.h"
+#include "GameObject.h"
+#include "Sprite.h"
+#include "TextureManager.h"
+#include "Player.h"
+#include "Mob.h"
+#include "Asteroid.h"
 
 #define AXES_LENGTH (10e5)
 
 float red[4] = { 1.0, 0.0, 0.0, 1.0 };
 float green[4] = { 0.0, 1.0, 0.0, 1.0 };
 float blue[4] = { 0.0, 0.0, 1.0, 1.0 };
+
 
 CGame::CGame() :
 Win(0),
@@ -144,7 +156,7 @@ void CGame::LoadConfig(const char* filename){
 
 bool CGame::Init(){	
 	VSLOGERR(log, "---- Start logging ----\nInit SDL:\n");	
-	srand(time(NULL));
+	srand((uint32)time((NULL)));
 	//INIT SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		VSLOGERR(log, SDL_GetError());		
@@ -215,7 +227,8 @@ bool CGame::Init(){
 		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_CULL_FACE);
 		glEnable(GL_MULTISAMPLE);
-		glClearColor(.3f, .3f, .3f, 1.0f);
+		//glClearColor(.3f, .3f, .3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		// Accept fragment if it closer to the camera than the former one
 		glDepthFunc(GL_LESS);
@@ -250,6 +263,7 @@ void CGame::InitVS(){
 	basicFont.setFixedFont(true);
 	basicFont.setColor(1.0f, 0.5f, 0.25f, 1.0f);
 	debugInfo = basicFont.genSentence();
+	renderLog = basicFont.genSentence();
 
 	shapeRender.Init();
 }
@@ -292,16 +306,19 @@ bool CGame::Run(){
 
 	MainScene.Init();
 	textureMan.Init(); // <-- Here all textures and animations are loaded
+	CAsteroidManager asterMan;
+	asterMan.Init();
 
-	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1.png");
+
+	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1a.png");
 
 	//ADD BACKGROUND 
 	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2 ), GameObject::SPRITE);
 	
 	// CREATE MOBS AND PLAYER
-	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
-	SpawnPlayer(MainScene, textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
-	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
+	//SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
+	SpawnPlayer(MainScene, textureMan, glm::vec3(1.0f, 1.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/");
+	///SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 
 	char fps[64] = "";
 	uint32 acc = 0;\
@@ -325,7 +342,7 @@ bool CGame::Run(){
 				sprintf(fps, "FPS %f \nVSYNC ON", (1000.0f / dt));
 			else
 				sprintf(fps, "FPS %f \nVSYNC OFF", (1000.0f / dt));
-			basicFont.prepareSentence(debugInfo, fps);
+				basicFont.prepareSentence(debugInfo, fps);
 		}
 
 		//Handle input
@@ -349,6 +366,12 @@ bool CGame::Run(){
 }
 
 void CGame::Update(uint32 dt){
+	char obj_str[32];
+	sprintf(obj_str, "Object counter: %d\n", GameObject::GetObjectCount());
+
+	renderLogStr = "Debug info:\n";
+	renderLogStr += obj_str;
+
 	basicShader.setUniform("time", GlobalTime/1000.0f);
 	GlobalTime += dt;
 	CInputManager::GetInputManager().Update(dt);
@@ -359,6 +382,8 @@ void CGame::Update(uint32 dt){
 void CGame::Draw(uint32 dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	basicShader.useProgram();
+
+	basicFont.prepareSentence(renderLog, renderLogStr);
 
 	static int time = 0;
 	time += dt;
@@ -380,6 +405,7 @@ void CGame::Draw(uint32 dt){
 
 	DrawAxes();
 	basicFont.renderSentence(10, 10, debugInfo);	
+	basicFont.renderSentence(10, 100, renderLog);
 
 	SDL_GL_SwapWindow(Win);
 }
@@ -553,4 +579,8 @@ CTextureManager& CGame::GetTextureManager(){
 
 VSLogLib& CGame::GetLog(){
 	return log;
+}
+
+std::string& CGame::GetRenderLog(){
+	return renderLogStr;
 }

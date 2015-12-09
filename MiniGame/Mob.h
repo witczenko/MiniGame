@@ -1,9 +1,7 @@
-
 #ifndef MOB_H
 #define MOB_H
 
 #include "Player.h"
-#include "Types.h"
 #include "GameObject.h"
 #include "Animation.h"
 

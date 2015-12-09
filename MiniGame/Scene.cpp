@@ -1,8 +1,8 @@
 #include "Scene.h"
-#include <glm\glm.hpp>
 #include "Animation.h"
-
 #include "Mob.h"
+#include "Asteroid.h"
+#include "Game.h"
 
 glm::vec3 AnimInitPos(0.0f, 0.0f, 0.0f);
 
@@ -65,6 +65,11 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
 	}
+	case GameObject::ASTEROID:{
+					    CAsteroid *aster = (CAsteroid*)obj;
+						SpriteRenderer.AddSprite(aster->sprite);
+						break;
+	}
 	default:
 	{
 
@@ -80,6 +85,15 @@ void CScene::Draw(){
 
 
 void CScene::Update(uint32 dt){
+	if (player){
+		glm::vec3 newCamPos = player->GetPos();
+		CGame::GetGameIntance().GetCamera().SetTarget(newCamPos);
+		newCamPos.z = CGame::GetGameIntance().GetCamera().GetPosition().z;
+		newCamPos.x /= 0.97f;
+		newCamPos.y /= 0.97f;
+		CGame::GetGameIntance().GetCamera().SetPosition(newCamPos);
+	}
+
 	critical_section = true;
 	proccessCollision();
 

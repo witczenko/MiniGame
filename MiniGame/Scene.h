@@ -1,12 +1,12 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <vector>
+#include "GameUtils.h"
 #include "GameObject.h"
-#include "Types.h"
 #include "Sprite.h"
 
 class CPlayer;
+class CGame;
 
 class CScene
 {
@@ -28,10 +28,9 @@ private:
 	   When flag is true, new objects are added to the PendingObjects vector and after critical section added normally to scene.
 	*/
 	bool critical_section;
-
-	CPlayer *player;
 	CSpriteRenderer SpriteRenderer;
 	std::vector<CSprite*> AnimSpriteCollection;
+	CPlayer *player;
 
 	void cleanUp();
 	void proccessCollision();

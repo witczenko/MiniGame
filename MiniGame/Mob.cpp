@@ -1,9 +1,6 @@
-
 #include "Mob.h"
-#include <glm/gtx/vector_angle.hpp>
 #include "Game.h"
-#include <glm/gtx/rotate_vector.hpp>
-
+#include "GameUtils.h"
 
 static const float MOB_VELOCITY = 1.5f;
 static const uint8 MOB_HEALTH = 100;
@@ -71,7 +68,7 @@ void CMob::RotateToTarget()
 	glm::vec2 ref_vec(0.0f, 1.0f);
 	glm::vec2 norm_direction(direction);
 	norm_direction = glm::normalize(norm_direction);
-	float angle = glm::orientedAngle(ref_vec, norm_direction);
+	float angle = R2D(glm::orientedAngle(ref_vec, norm_direction));
 	sprite_anim->SetAngleZ(angle);
 }
 
@@ -91,6 +88,7 @@ void CMob::Update(uint32 dt)
 
 
 void CMob::OnCollision(GameObject* obj){
+	/*
 	switch (obj->GetType())
 	{
 	case OBJECT_TYPE::PLAYER:
@@ -106,4 +104,5 @@ void CMob::OnCollision(GameObject* obj){
 	}		
 		
 	}
+	*/
 }

@@ -1,9 +1,10 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
-#include "Types.h"
-#include <glm\glm.hpp>
-#include "Input.h"
+
+#include "GameUtils.h"
+
+class CGame;
 
 class GameObject : public CInputInterface
 {
@@ -37,14 +38,17 @@ public:
 	virtual void Update(uint32 dt){};
 	virtual void OnCollision(GameObject* obj){};
 
+	static uint32 GetObjectCount();
+
 protected:
 	OBJECT_TYPE type;
+	glm::vec3 pos;
+	CGame& Game;
+
 private:
-	
 	bool collide; 
 	float collsion_rad;
 	uint32 ID;
-	glm::vec3 pos;
 };
 
 #endif

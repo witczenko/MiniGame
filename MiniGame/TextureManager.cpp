@@ -22,6 +22,7 @@ void CTextureManager::Init(){
 	LoadTexture("gfx/no_texture.png");
 	LoadTexture("gfx/cursor.png");
 	LoadTexture("gfx/skybox/skybox1/1.png");
+	LoadTexture("gfx/skybox/skybox1/1a.png");
 	LoadTexture("gfx/Spaceship_art_pack/Background/background.jpg");
 	LoadTexture("gfx/Spaceship_art_pack/Aestroids/aestroid_dark.png");
 	LoadTexture("gfx/Spaceship_art_pack/Aestroids/aestroid_brown.png");

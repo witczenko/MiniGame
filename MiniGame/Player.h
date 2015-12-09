@@ -59,6 +59,7 @@ private:
 
 	uint32 InputState;
 	glm::vec3 old_pos;
+
 protected:
 	void OnKeyDown(const SDL_Keycode *Key);
 	void Update(uint32 dt);

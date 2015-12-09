@@ -1,14 +1,26 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
-#include <glm\glm.hpp>
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <VSL\vslibs.h>
 #include "Types.h"
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <map>
+#include <time.h>
+#include "Input.h"
 
 #define MIN(a,b)            (((a) < (b)) ? (a) : (b))
 #define MAX(a,b)            (((a) > (b)) ? (a) : (b))
 #define D2R(x) x*(3.141592f/180.0f)
-#define R2D(x) x*57.2957795
+#define R2D(x) x*57.2957795f
 
 class GameUtils
 {

@@ -1,15 +1,17 @@
 #include "GameObject.h"
+#include "Game.h"
+
 #define START_POS (glm::vec3(0.0f, 0.0f, 0.0f))
 #define COLLISON_RAD (0.25f)
 
 static uint32 OBJECT_COUNTER;
 
-
 GameObject::GameObject() :
 pos(START_POS),
 collsion_rad(COLLISON_RAD),
 collide(false),
-type(OBJECT_TYPE::UNDEFINED)
+type(OBJECT_TYPE::UNDEFINED),
+Game(CGame::GetGameIntance())
 {
 	ID = OBJECT_COUNTER;
 	OBJECT_COUNTER++;
@@ -19,7 +21,8 @@ GameObject::GameObject(glm::vec3 init_pos):
 pos(init_pos),
 collsion_rad(COLLISON_RAD),
 collide(false),
-type(OBJECT_TYPE::UNDEFINED)
+type(OBJECT_TYPE::UNDEFINED),
+Game(CGame::GetGameIntance())
 {
 	ID = OBJECT_COUNTER;
 	OBJECT_COUNTER++;
@@ -65,4 +68,8 @@ void GameObject::SetPos(glm::vec2 pos){
 
 GameObject::OBJECT_TYPE GameObject::GetType() const{
 	return this->type;
+}
+
+uint32 GameObject::GetObjectCount(){
+	return OBJECT_COUNTER;
 }

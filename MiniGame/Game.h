@@ -1,27 +1,13 @@
 #ifndef CGAME_H
 #define CGAME_H
 
-#include "Types.h"
-#include <GL/glew.h>
-#include "SDL/SDL.h"
-#include "Input.h"
-#include "Camera.h"
-#include <glm\glm.hpp>
-
 #define FORCE_GL_3
-#include "VSL/vslibs.h"
 
 #include "GameUtils.h"
-#include "Scene.h"
-#include "GameObject.h"
-#include "Sprite.h"
-#include "TextureManager.h"
-#include "MapHandler.h"
-#include "Player.h"
-#include "Mob.h"
 
-#include <iostream>
-#include <fstream>
+#include "Camera.h"
+#include "TextureManager.h"
+#include "Scene.h"
 
 /* SCREEN RESOLUTION BIG/SMALL SCREEN */
 #if 0
@@ -76,7 +62,8 @@ private:
 	//Fonts
 	VSShaderLib basicShader, lineShader;
 	VSFontLib basicFont;
-	unsigned int aSentence, debugInfo;
+	unsigned int renderLog,  debugInfo;
+	std::string renderLogStr;
 
 	/* ---- Mouse ----*/
 	glm::vec3 rayDir; // <-- camera-mouse direction
@@ -136,6 +123,7 @@ public:
 	CCamera& GetCamera();
 	CTextureManager& GetTextureManager();
 	VSLogLib& GetLog();
+	std::string& GetRenderLog();
 
 	static CGame & GetGameIntance(){
 		static CGame Game;

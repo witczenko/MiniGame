@@ -1,9 +1,5 @@
-
 #include "Player.h"
-#include "GameObject.h"
-#include "Types.h"
 #include "GameUtils.h"
-#include <glm/gtx/vector_angle.hpp>
 #include "Game.h"
 
 static const float32 PLAYER_VELOCITY = 2.5f;
@@ -78,7 +74,7 @@ void CPlayer::RotateToMouse(){
 	obj_pos.x = this->GetPos().x;
 	obj_pos.y = this->GetPos().y;
 	mouse_vec = glm::normalize(mouse_vec - obj_pos);
-	float angle = glm::orientedAngle(ref_vec, mouse_vec);
+	float angle = R2D(glm::orientedAngle(ref_vec, mouse_vec));
 	sprite_anim->SetAngleZ(angle);
 }
 
@@ -133,31 +129,38 @@ void CPlayer::Move(uint32 dt)
 
 	old_pos = GameObject::GetPos();
 	GameObject::SetPos(pos);
+
+	RotateToMouse();
 }
 
 void CPlayer::Update(uint32 dt){
 	RotateToMouse();
 	WeaponStatusUpdate(dt);
 	Move(dt);
+	char pos_str[64];
+	sprintf(pos_str, "Player position (x,y,z) = (%f,%f,%f)\n", pos.x, pos.y, pos.z);
+
+	Game.GetRenderLog() += pos_str;
+	
 }
 
 void CPlayer::OnMouseButtonDown(const MouseArgs *Args)
 {
-	static float z = 0.1;
-	z += 0.05;
+	static float z = 0.1f;
+	z += 0.05f;
 	switch (Args->button)
 	{
 	case MLeft:
 	{
 		InputState |= STATE_TYPE::LMB;
-		SpawnMob(CGame::GetGameIntance().GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
+		SpawnMob(Game.GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
 		break;
 
 	}
 	case MRight:
 	{
 		InputState |= STATE_TYPE::RMB;
-		SpawnMob(CGame::GetGameIntance().GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
+		SpawnMob(Game.GetScene(), CGame::GetGameIntance().GetTextureManager(), glm::vec3(0.0f, 0.0f, z), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 		break;
 
 	}
