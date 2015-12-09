@@ -56,6 +56,7 @@ void CRapidGun::CreateBullet()
 
 		Bullet->sprite_anim = this->sprite_anim;
 
+
 		if (Bullet->sprite_anim)
 		Scene.AddObject(Bullet, GameObject::OBJECT_TYPE::PROJECTILE);
 		else delete Bullet;
@@ -63,6 +64,7 @@ void CRapidGun::CreateBullet()
 	Bullet = NULL;
 	
 }
+
 
 void CRapidGun::Shoot(const uint32 dt)
 {

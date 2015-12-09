@@ -1,13 +1,14 @@
 #include "Scene.h"
 #include <glm\glm.hpp>
 #include "Animation.h"
-#include "Player.h"
+
 #include "Mob.h"
 #include "Projectile.h"
 
 glm::vec3 AnimInitPos(0.0f, 0.0f, 0.0f);
 
-CScene::CScene()
+CScene::CScene():
+player(NULL)
 {
 }
 
@@ -53,6 +54,7 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	case GameObject::PLAYER:
 	{
 						CPlayer *s = (CPlayer*)obj;
+						player = s;
 						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
 						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
@@ -86,24 +88,25 @@ void CScene::Draw(){
 
 
 void CScene::Update(uint32 dt){
-	for (auto pobj : PendingObjects)
-		this->AddObject(pobj.obj, pobj.type);
-
 	critical_section = true;
 	proccessCollision();
 
 	//Error when we don't create a Player!
-	GameObject *player = ObjectCollection[GameObject::OBJECT_TYPE::PLAYER][0];
-
 	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){
 		for (auto obj : ObjectCollection[i]){
 			if (i == GameObject::OBJECT_TYPE::MOB){
-				((CMob*)obj)->setTarget(player->GetPos());
+				if (player)
+					((CMob*)obj)->setTarget(player->GetPos());
 			}
 			obj->Update(dt);
 		}
 	}
 	critical_section = false;
+
+	for (auto pobj : PendingObjects)
+		this->AddObject(pobj.obj, pobj.type);
+
+	PendingObjects.clear();
 }
 
 void CScene::cleanUp(){

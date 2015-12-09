@@ -16,6 +16,7 @@ public:
 		TILE,
 		MOB,
 		PROJECTILE,
+		ASTEROID,
 		TYPE_COUNT,
 	};
 
