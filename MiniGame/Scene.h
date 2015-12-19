@@ -19,7 +19,10 @@ private:
 		pending_obj_t(GameObject* in_obj, GameObject::OBJECT_TYPE in_type) : obj(in_obj), type(in_type){};
 	};
 
+
+	std::vector<GameObject*> GeneralCollection;
 	std::vector<GameObject*> ObjectCollection[GameObject::TYPE_COUNT];
+	std::vector<CSprite*> VisibleSprites;
 	std::vector<GameObject*> CollideObjects;
 	std::vector<pending_obj_t> PendingObjects;
 
@@ -37,6 +40,7 @@ private:
 	void Draw();
 	void Init();
 	void Update(uint32 dt);
+	void frustumCulling();
 
 public:
 	void AddObject(GameObject* obj, GameObject::OBJECT_TYPE type);

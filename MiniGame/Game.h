@@ -18,7 +18,7 @@
 #endif
 
 #define ASPECT	(WIDTH/(float32)HEIGHT)
-#define FOV		(60.0f)
+#define FOV		(45.0f)
 
 #define CAM_SPEED ( 0.2f );
 

@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "types.h"
+#include "FrustumR.h"
 
 class CCamera
 {
@@ -13,6 +14,9 @@ private:
 	glm::mat4x4 View;
 
 	float32 fov, aspect, znear, zfar;
+
+	
+	
 
 public:
 	CCamera(float32 fov, float32 aspect, float32 znear, float32 zfar);
@@ -30,6 +34,8 @@ public:
 	void SetPosition(glm::vec3 pos);
 	void SetTarget(glm::vec3 target);
 
+	int SphereFrustumTest(glm::vec3 & pos, float rad);
+	FrustumR frustum;
 };
 
 #endif

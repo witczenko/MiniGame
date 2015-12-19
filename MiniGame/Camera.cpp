@@ -1,6 +1,8 @@
 #include "Camera.h"
 #include <glm\gtx\matrix_operation.hpp>
+#include <glm\gtc\type_ptr.hpp>
 #include "glm\gtx\transform.hpp"
+
 
 CCamera::CCamera(float32 fov, float32 aspect, float32 znear, float32 zfar) :
 Position(glm::vec3(0.0f, 0.0f, 4.0f)),
@@ -12,6 +14,7 @@ aspect(aspect)
 {
 	Projection = glm::perspective(fov, aspect, znear, zfar);
 	View = glm::lookAt(Position, Target, glm::vec3(0.0f, 1.0f, 0.0f));
+	frustum.setFrustum(Projection*View);
 }
 
 
@@ -42,20 +45,28 @@ glm::vec3 CCamera::GetTarget() const{
 void CCamera::SetPosition(glm::vec3 pos){
 	Position = pos;
 	View = glm::lookAt(Position, Target, glm::vec3(0.0f, 1.0f, 0.0f));
+	frustum.setFrustum(Projection*View);
 }
 
 
 void CCamera::SetAspect(float32 aspect){
 	this->aspect = aspect;
-	Projection = glm::perspective(fov, aspect, 0.1f, 200.0f);
+	Projection = glm::perspective(fov, aspect, znear, zfar);
+	frustum.setFrustum(Projection*View);
 }
 
 void CCamera::SetFov(float32 fov){
 	this->fov= fov;
-	Projection = glm::perspective(fov, aspect, 0.1f, 200.0f);
+	Projection = glm::perspective(fov, aspect, znear, zfar);
+	frustum.setFrustum(Projection*View);
 }
 
 void CCamera::SetTarget(glm::vec3 target){
 	this->Target = target;
 	View = glm::lookAt(Position, Target, glm::vec3(0.0f, 1.0f, 0.0f));
+	frustum.setFrustum(Projection*View);
+}
+
+int CCamera::SphereFrustumTest(glm::vec3 & pos, float rad){
+	return frustum.sphereInFrustum(pos, rad);
 }

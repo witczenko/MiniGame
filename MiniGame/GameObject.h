@@ -5,9 +5,11 @@
 #include "GameUtils.h"
 
 class CGame;
+class CScene;
 
 class GameObject : public CInputInterface
 {
+	friend CScene;
 public:
 	enum OBJECT_TYPE{
 		UNDEFINED = 0,
@@ -19,6 +21,12 @@ public:
 		PROJECTILE,
 		ASTEROID,
 		TYPE_COUNT,
+	};
+
+	enum OBJECT_STATUS{
+		DEAD = 0,
+		ALIVE,
+		PENDING,
 	};
 
 	GameObject();
@@ -42,12 +50,15 @@ public:
 
 protected:
 	OBJECT_TYPE type;
+	OBJECT_STATUS status;
+
 	glm::vec3 pos;
 	CGame& Game;
 
-private:
 	bool collide; 
 	float collsion_rad;
+
+private:
 	uint32 ID;
 };
 

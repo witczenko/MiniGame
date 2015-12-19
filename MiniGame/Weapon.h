@@ -14,7 +14,7 @@ static const float BULLET_VELOCITY = 9.5f;
 static const uint32 ROCKET_LAUNCHER_RELOAD_DELAY = 3000;
 static const uint32 ROCKET_LAUNCHER_AMMUNITION = 10;
 static const uint32 ROCKET_DAMAGE = 100;
-static const float  ROCKET_VELOCITY = 4.f;
+static const float  ROCKET_VELOCITY = 1.f;
 
 
 /// RAPID GUN ///

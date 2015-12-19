@@ -14,12 +14,13 @@ protected:
 
 	
 	void Move(const uint32 dt);
+	void OnCollision(GameObject* obj);
+
 public:
 	CSpriteAnimation *sprite_anim;
 	void CalculateDirection();
 	void Update(uint32 dt);
-	void OnCollision();
-
+	
 	CProjectile();
 	CProjectile(const uint32 damage, const float velocity);
 	~CProjectile();

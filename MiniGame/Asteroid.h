@@ -22,6 +22,7 @@ private:
 
 protected:
 	void Update(uint32 dt);
+	void OnCollision(GameObject* obj);
 };
 
 class CAsteroidManager{
@@ -29,7 +30,7 @@ public:
 	CAsteroidManager();
 	~CAsteroidManager();
 	void Update(uint32 dt);
-	void Init();
+	void Init();	
 private:
 	std::vector<CAsteroid*> AsteroidCollection;
 	CGame & Game;

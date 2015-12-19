@@ -60,6 +60,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;OpenGL32.lib;FreeImage.lib;Box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)$(Configuration)\gfx"
@@ -92,6 +93,7 @@ xcopy "$(SolutionDir)$(ProjectName)\bin" "$(SolutionDir)$(Configuration)" /d</Co
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FrustumR.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameUtils.cpp" />
@@ -99,6 +101,7 @@ xcopy "$(SolutionDir)$(ProjectName)\bin" "$(SolutionDir)$(Configuration)" /d</Co
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapHandler.cpp" />
     <ClCompile Include="Mob.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -110,12 +113,14 @@ xcopy "$(SolutionDir)$(ProjectName)\bin" "$(SolutionDir)$(Configuration)" /d</Co
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="FrustumR.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameUtils.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="MapHandler.h" />
     <ClInclude Include="Mob.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Scene.h" />
@@ -125,13 +130,13 @@ xcopy "$(SolutionDir)$(ProjectName)\bin" "$(SolutionDir)$(Configuration)" /d</Co
     <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Debug\shaders\dirlightdiffambpix.frag" />
-    <None Include="..\Debug\shaders\dirlightdiffambpix.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <Xml Include="config.xml">
       <SubType>Designer</SubType>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gfx\shaders\dirlightdiffambpix.frag" />
+    <None Include="gfx\shaders\dirlightdiffambpix.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

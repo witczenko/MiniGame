@@ -42,17 +42,15 @@ private:
  public:
 	 CSpriteRenderer();
 	 ~CSpriteRenderer();
-	 void AddSprite(CSprite* sprite);
-	 void Render();
+	 void Render(std::vector<CSprite*> & spriteCollection);
 	 void Init();
 
  private:
 	 VSMathLib &vsml;
 
 	 void GenBuffers();
-	 void OrderByZAxis();
+	 void OrderByZAxis(std::vector<CSprite*> & spriteCollection);
 
-	 std::vector<CSprite*> spriteCollection;
 	 GLuint VAO;
 	 GLuint VBO;
 	 GLuint UV;

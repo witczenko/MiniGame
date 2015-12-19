@@ -52,9 +52,11 @@ void CSprite::SetAngleZ(float32 angle){
 
 void CSprite::SetWidth(float32 width){
 	this->width = width;
+	this->SetCollisionRad(width / 2.2f);
 }
 void CSprite::SetHeight(float32 height){
-	this->height = height;
+	this->height = height;	
+	this->SetCollisionRad(height/ 2.2f);
 }
 
 
@@ -102,8 +104,10 @@ void CSpriteRenderer::Init()
 	GenBuffers();
 }
 
-void CSpriteRenderer::Render()
+void CSpriteRenderer::Render(std::vector<CSprite*> & spriteCollection)
 {
+	OrderByZAxis(spriteCollection);
+
 	static uint32 prev_tex;
 	glBindVertexArray(VAO);
 	// Bind texure, send matrices to GL...
@@ -129,10 +133,6 @@ void CSpriteRenderer::Render()
 	glBindVertexArray(0);
 }
 
-void CSpriteRenderer::AddSprite(CSprite* sprite){
-	spriteCollection.push_back(sprite);
-	OrderByZAxis();
-}
 
 void CSpriteRenderer::GenBuffers(){
 	//prepare VAO
@@ -165,6 +165,6 @@ bool sort_func(GameObject *obj1, GameObject *obj2){
 }
 
 
-void CSpriteRenderer::OrderByZAxis(){
+void CSpriteRenderer::OrderByZAxis(std::vector<CSprite*> & spriteCollection){
 	std::sort(spriteCollection.begin(), spriteCollection.end(), sort_func);
 }

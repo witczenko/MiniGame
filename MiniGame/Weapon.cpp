@@ -56,7 +56,7 @@ void CRapidGun::CreateBullet(const float angle)
 		Bullet->CalculateDirection();
 		Bullet->sprite_anim = new CSpriteAnimation();
 		Bullet->sprite_anim->SetAnimation(this->sprite_anim->GetAnimation());
-		Bullet->sprite_anim->SetFPS(24);
+		Bullet->sprite_anim->SetFPS(1);
 		Bullet->sprite_anim->SetHeight(0.1f);
 		Bullet->sprite_anim->SetWidth(0.1f);
 		Bullet->sprite_anim->SetPos(this->pos);
@@ -145,7 +145,7 @@ void CRocketLauncher::CreateRocket(const float angle)
 		Rocket->CalculateDirection();
 		Rocket->sprite_anim = new CSpriteAnimation();
 		Rocket->sprite_anim->SetAnimation(this->sprite_anim->GetAnimation());
-		Rocket->sprite_anim->SetFPS(24);
+		Rocket->sprite_anim->SetFPS(6);
 		Rocket->sprite_anim->SetHeight(0.2f);
 		Rocket->sprite_anim->SetWidth(0.2f);
 		Rocket->sprite_anim->SetPos(this->pos);

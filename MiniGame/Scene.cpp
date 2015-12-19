@@ -31,49 +31,50 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 	}
 
 	ObjectCollection[type].push_back(obj);
+	GeneralCollection.push_back(obj);
 
 	if (obj->GetCollideFlag())
 		CollideObjects.push_back(obj);
 
 	switch (type){
 	case GameObject::SPRITE:{
-						SpriteRenderer.AddSprite((CSprite*)obj);
+						ObjectCollection[GameObject::SPRITE].push_back((CSprite*)obj);
 						break;
 	}
 	case GameObject::SPRITE_ANIM:{
 						CSprite *s = (CSprite*)obj;
-						SpriteRenderer.AddSprite(s);
+						ObjectCollection[GameObject::SPRITE].push_back(s);
 						break;
 	}
 	case GameObject::TILE:{
 						CSprite *s = (CSprite*)obj;
-						SpriteRenderer.AddSprite(s);
+						ObjectCollection[GameObject::SPRITE].push_back(s);
 						break;
 	}
 	case GameObject::PLAYER:
 	{
 						CPlayer *s = (CPlayer*)obj;
 						player = s;
-						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE].push_back((CSprite*)s->sprite_anim);
 						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
 	}
 	case GameObject::MOB:
 	{
 						CMob *s = (CMob*)obj;
-						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE].push_back((CSprite*)s->sprite_anim);
 						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
 	}
 	case GameObject::ASTEROID:{
 								  CAsteroid *aster = (CAsteroid*)obj;
-								  SpriteRenderer.AddSprite(aster->sprite);
+								  ObjectCollection[GameObject::SPRITE].push_back(aster->sprite);
 								  break;
 	}
 	case GameObject::PROJECTILE:
 	{
 						CProjectile *s = (CProjectile*)obj;
-						SpriteRenderer.AddSprite((CSprite*)s->sprite_anim);
+						ObjectCollection[GameObject::SPRITE].push_back((CSprite*)s->sprite_anim);
 						ObjectCollection[GameObject::SPRITE_ANIM].push_back(s->sprite_anim);
 						break;
 	}
@@ -85,8 +86,22 @@ void CScene::AddObject(GameObject* obj, GameObject::OBJECT_TYPE type){
 }
 
 void CScene::Draw(){
-	//sprite rendering
-	SpriteRenderer.Render();
+	char buffor[64];
+
+	//sprite renderie
+	VisibleSprites.clear();
+	for (auto sprite : ObjectCollection[GameObject::SPRITE]){
+		if (sprite->status == GameObject::OBJECT_STATUS::ALIVE){
+			CSprite* sp = (CSprite*)sprite;
+			if (CGame::GetGameInstance().GetCamera().SphereFrustumTest(sp->GetPos(), sp->GetCollisionRad()) != FrustumR::OUTSIDE)
+				VisibleSprites.push_back(sp);
+		}
+	}
+	sprintf(buffor, "Visible objects: %d\n", VisibleSprites.size());
+
+	//Frustum culling
+	CGame::GetGameInstance().GetRenderLog() += buffor;
+	SpriteRenderer.Render(VisibleSprites);
 }
 
 
@@ -94,11 +109,10 @@ void CScene::Draw(){
 void CScene::Update(uint32 dt){
 	if (player){
 		glm::vec3 newCamPos = player->GetPos();
-		CGame::GetGameInstance().GetCamera().SetTarget(newCamPos);
 		newCamPos.z = CGame::GetGameInstance().GetCamera().GetPosition().z;
-		newCamPos.x /= 0.97f;
-		newCamPos.y /= 0.97f;
+
 		CGame::GetGameInstance().GetCamera().SetPosition(newCamPos);
+		CGame::GetGameInstance().GetCamera().SetTarget(player->GetPos());
 	}
 
 	critical_section = true;
@@ -107,13 +121,12 @@ void CScene::Update(uint32 dt){
 	//Error when we don't create a Player!
 	for (uint32 i = 0; i < GameObject::TYPE_COUNT; i++){
 		for (auto obj : ObjectCollection[i]){
-
 			if (i == GameObject::OBJECT_TYPE::MOB){
 				if (player)
 					((CMob*)obj)->setTarget(player->GetPos());
 			}
-			if (obj)
-			{
+
+			if (obj && obj->status == GameObject::OBJECT_STATUS::ALIVE){
 				obj->Update(dt);
 			}
 			
@@ -129,22 +142,22 @@ void CScene::Update(uint32 dt){
 
 void CScene::cleanUp(){
 	//delete all game objects 
-	for (size_t i = 0; i < GameObject::OBJECT_TYPE::TYPE_COUNT; i++)
-	{
-		for (auto obj : ObjectCollection[i]){
+		for (auto obj : GeneralCollection){
 			if (obj){
 				delete obj;
 				obj = NULL;
 			}
 		}
-		ObjectCollection[i].clear();
-	}
+		GeneralCollection.clear();
 }
 
 void CScene::proccessCollision(){
 	for (auto obj1 : CollideObjects){
 		for (auto obj2 : CollideObjects)
 		{
+			if (obj1->status != GameObject::OBJECT_STATUS::ALIVE || obj2->status != GameObject::OBJECT_STATUS::ALIVE)
+				continue;
+
 			if (obj1 == obj2)
 				continue;
 
@@ -158,4 +171,7 @@ void CScene::proccessCollision(){
 
 		}
 	}
+}
+
+void CScene::frustumCulling(){
 }

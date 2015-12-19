@@ -10,7 +10,7 @@ static const float PROJECTILE_VELOCITY = 100;
 
 /// PROJECTILE ///
 
-CProjectile::CProjectile():
+CProjectile::CProjectile() :
 sprite_anim(NULL)
 {
 	type = OBJECT_TYPE::PROJECTILE;
@@ -18,6 +18,7 @@ sprite_anim(NULL)
 	PROJECTILE_AMOUNT++;
 	damage = PROJECTILE_DAMAGE;
 	velocity = PROJECTILE_VELOCITY;
+	this->collide = true;
 }
 
 CProjectile::CProjectile(const uint32 damage, const float velocity):
@@ -26,7 +27,6 @@ sprite_anim(NULL)
 	CProjectile();
 	this->damage = damage;
 	this->velocity = velocity;
-
 }
 
 CProjectile::~CProjectile()
@@ -41,7 +41,7 @@ CProjectile::~CProjectile()
 void CProjectile::CalculateDirection()
 {
 	glm::vec3 mouse_vec;
-	CGame::GetGameInstance().GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
+	Game.GetMouse2dWorldPositon(mouse_vec.x, mouse_vec.y);
 	this->direction = glm::normalize(mouse_vec - this->GetPos());
 }
 
@@ -52,9 +52,10 @@ void CProjectile::Move(const uint32 dt)
 	this->sprite_anim->SetPos(this->GetPos());
 }
 
-void CProjectile::OnCollision()
+void CProjectile::OnCollision(GameObject* obj)
 {
-
+	if (obj->GetType() == OBJECT_TYPE::ASTEROID)
+		status = OBJECT_STATUS::DEAD;
 }
 
 void CProjectile::Update(uint32 dt)

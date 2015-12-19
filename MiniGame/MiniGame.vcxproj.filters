@@ -49,6 +49,12 @@
     <ClCompile Include="Weapon.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="FrustumR.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -99,14 +105,12 @@
     <ClInclude Include="Weapon.h">
       <Filter>headers</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Debug\shaders\dirlightdiffambpix.frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="..\Debug\shaders\dirlightdiffambpix.vert">
-      <Filter>shaders</Filter>
-    </None>
+    <ClInclude Include="FrustumR.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
@@ -121,5 +125,13 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="config.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gfx\shaders\dirlightdiffambpix.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="gfx\shaders\dirlightdiffambpix.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

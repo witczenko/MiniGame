@@ -11,7 +11,8 @@ pos(START_POS),
 collsion_rad(COLLISON_RAD),
 collide(false),
 type(OBJECT_TYPE::UNDEFINED),
-Game(CGame::GetGameInstance())
+Game(CGame::GetGameInstance()),
+status(OBJECT_STATUS::ALIVE)
 {
 	ID = OBJECT_COUNTER;
 	OBJECT_COUNTER++;
@@ -22,7 +23,8 @@ pos(init_pos),
 collsion_rad(COLLISON_RAD),
 collide(false),
 type(OBJECT_TYPE::UNDEFINED),
-Game(CGame::GetGameInstance())
+Game(CGame::GetGameInstance()),
+status(OBJECT_STATUS::ALIVE)
 {
 	ID = OBJECT_COUNTER;
 	OBJECT_COUNTER++;
@@ -54,7 +56,7 @@ bool GameObject::GetCollideFlag() const{
 }
 
 void GameObject::SetCollisionRad(float rad){
-	this->collsion_rad;
+	this->collsion_rad = rad;
 }
 
 float GameObject::GetCollisionRad() const{

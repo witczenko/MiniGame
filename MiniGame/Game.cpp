@@ -28,7 +28,7 @@ GlobalTime(0),
 GameRunning(true),
 mouse2dWorldPosition(0.0f, 0.0f),
 lockCam(false),
-Cam(CCamera(FOV, ASPECT, 0.1f, 250.0f)),
+Cam(CCamera(FOV, ASPECT, 0.1f, 200.0f)),
 vsml(*VSMathLib::getInstance())
 {
 	/* Prepare initial config (basic settings) */
@@ -350,14 +350,16 @@ bool CGame::Run(){
 
 
 	uint32 TEXTURE_2 = textureMan.GetTexture("gfx/skybox/skybox1/1.png");
+	CSprite* bg = new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2);
+	bg->SetCollisionRad(10.0f);
 
 	//ADD BACKGROUND 
-	MainScene.AddObject(new CSprite(glm::vec3(0.0f, 0.0f, -1.0f), 1.5f * 5, 1.0f * 5, TEXTURE_2 ), GameObject::SPRITE);
+	MainScene.AddObject(bg, GameObject::SPRITE);
 	
 	// CREATE MOBS AND PLAYER
 	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, 0.0f, 0.1f), "gfx/Spaceship_art_pack/Red/Enemy_animation/");
 	SpawnPlayer(MainScene, textureMan, glm::vec3(0.0f, 0.0f, 0.0f), "gfx/Spaceship_art_pack/Blue/Animation/","gfx/Spaceship_art_pack/Blue/Bullet/","gfx/Spaceship_art_pack/Blue/Spacebombs/");
-	SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
+	//SpawnMob(MainScene, textureMan, glm::vec3(-1.0f, -1.0f, -0.1f), "gfx/Spaceship_art_pack/Blue/Enemy_animation/");
 
 	char fps[64] = "";
 	uint32 acc = 0;\
@@ -405,10 +407,10 @@ bool CGame::Run(){
 }
 
 void CGame::Update(uint32 dt){
-	char obj_str[32];
-	sprintf(obj_str, "Object counter: %d\n", GameObject::GetObjectCount());
+	char obj_str[128];
+	sprintf(obj_str, "Object counter: %d\nCamera position: %f %f %f\n", GameObject::GetObjectCount(), Cam.GetPosition().x, Cam.GetPosition().y, Cam.GetPosition().z);
 
-	renderLogStr = "Debug info:\n";
+	renderLogStr = "**** Debug info ****\n";
 	renderLogStr += obj_str;
 
 	basicShader.setUniform("time", GlobalTime/1000.0f);
@@ -422,7 +424,7 @@ void CGame::Draw(uint32 dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	basicShader.useProgram();
 
-	basicFont.prepareSentence(renderLog, renderLogStr);
+	
 
 	static int time = 0;
 	time += dt;
@@ -443,6 +445,7 @@ void CGame::Draw(uint32 dt){
 	vsml.popMatrix(VSMathLib::MODEL);
 
 	DrawAxes();
+	basicFont.prepareSentence(renderLog, renderLogStr);
 	basicFont.renderSentence(10, 10, debugInfo);	
 	basicFont.renderSentence(10, 100, renderLog);
 

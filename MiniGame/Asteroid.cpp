@@ -3,7 +3,7 @@
 static const int32 ASTER_BASE_DURABILITY = 100;
 static const float32 ASTER_BASE_VELOCITY = 0.08f;
 static const float32 ASTER_BASE_ANGULAR_VELOCITY = 250.0f;
-static const int32 ASTER_MANAGER_ASTER_COUNT = 20;
+static const int32 ASTER_MANAGER_ASTER_COUNT = 50;
 static const glm::vec3 ASTER_BASE_DIR(0.0f, -1.0f, 0.0f);
 
 /* ASTEROID */
@@ -52,6 +52,11 @@ void CAsteroid::Update(uint32 dt){
 	if (pos.y < -10) pos.y = 10.f;
 }
 
+void CAsteroid::OnCollision(GameObject* obj){
+	if (obj->GetType() == OBJECT_TYPE::PROJECTILE)
+		status = OBJECT_STATUS::DEAD;
+}
+
 
 /* ---- ASTEROID MANAGER ---- */
 CAsteroidManager::CAsteroidManager() :
@@ -78,8 +83,10 @@ void CAsteroidManager::Init(){
 		aster->SetPos(start_pos);
 		start_pos.x += 0.3f;
 		start_pos.z += 0.01f;
+		aster->SetCollideFlag(true);
 
 		AsteroidCollection.push_back(aster);
 		Game.GetScene().AddObject(aster, GameObject::OBJECT_TYPE::ASTEROID);
 	}
 }
+
